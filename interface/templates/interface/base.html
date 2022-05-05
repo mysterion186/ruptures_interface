@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruptures Interface</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'interface/style.css' %}">
+</head>
+<body>
+    <div id="navbar">
+        <img id="borelli" src="https://centreborelli.ens-paris-saclay.fr/sites/centre_borelli/files/icons/xlogo_cb.png.pagespeed.ic.hkhtFJmMwg.webp" alt="centre_borelli">
+        <img id="ENS" src="https://centreborelli.ens-paris-saclay.fr/sites/centre_borelli/files/icons/xlogo_ens_ps.png.pagespeed.ic.1_mAbAZU8R.webp" alt="ENS">
+        <div class="log">
+            S'identifier
+        </div>
+    </div>
+
+        {% block content %}
+    
+        {% endblock %}
+
+</body>
+</html>
