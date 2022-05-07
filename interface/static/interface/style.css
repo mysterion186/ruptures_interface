@@ -21,6 +21,8 @@ body{
     border-radius : 25px;
     margin-top: 28px;
     padding : 10px;
+    height :550px;
+    width : 300px;
 }
 
 .wrapper form {
@@ -45,6 +47,10 @@ section .row{
     align-items : center;
     justify-content :space-between;
 }
+
+/* .progress-area{
+    display :none;
+} */
 
 .progress-area .row .content {
     width : 100%;
