@@ -1,13 +1,100 @@
 body{
     font-family: 'Roboto', sans-serif;
-    display: flex;
-    flex-direction: column;
     font : roboto;
+    min-height: 100vh;
 }
 
+
+#file_input{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
 *{
     margin : 0;
     padding: 0;
+    box-sizing: border-box;
+}
+
+.wrapper {
+    border : 5px solid;
+    border-radius : 25px;
+    margin-top: 28px;
+    padding : 10px;
+}
+
+.wrapper form {
+    border : 2px dashed ;
+    border-radius : 25px;
+    padding : 10px;
+    margin : 10px;
+    display : flex;
+    cursor : pointer;
+    align-items : center;
+    justify-content : center;
+    flex-direction : column;
+}
+
+section .row{
+    background : hsl(273, 30%, 47%); 
+    margin-bottom :10px;
+    border-radius: 15px;
+    padding : 10px;
+    list-style: none;
+    display :flex;
+    align-items : center;
+    justify-content :space-between;
+}
+
+.progress-area .row .content {
+    width : 100%;
+    margin-left: 15px;
+}
+
+
+.progress-area .details {
+    display : flex;
+    align-items : center;
+    justify-content : space-between;
+    
+}
+
+.progress-bar {
+    height : 6px;
+    width : 100%;
+    background : white;
+    margin-top: 7px;
+    border-radius: 30px;
+}
+
+.progress-bar .progress{
+    height: 100%;
+    width: 30%;
+    background : rgb(66, 8, 160);
+}
+
+.uploaded-area{
+    max-height:230px;
+    overflow:scroll;
+}
+
+.uploaded-area::-webkit-scrollbar{
+    width: 0px;
+}
+
+.uploaded-area .row .details {
+    display : flex;
+    flex-direction: column;
+}
+
+.uploaded-area .row .content{
+    display : flex;
+    align-items : center;
+    
+}
+
+.uploaded-area .details .size{
+    font-size: 12px;
 }
 
 
