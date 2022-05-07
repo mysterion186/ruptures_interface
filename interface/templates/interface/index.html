@@ -1,14 +1,14 @@
 {% extends 'interface/base.html' %} 
 {% load static %}
 {% block content %}         
-
-
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 <section id = "file_input">
     <div class="wrapper">
         <header>Télécharger vos fichiers ici</header>
-        <form action="#" method="post" enctype="multipart/form-data">
-            <input type="file" class="file-input" hidden>
+        <form id="myform" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" class="file-input" name="myfile" hidden>
             <img src="{% static 'interface/download.gif' %}" alt="download" />
             <p>Parcourir les fichiers locaux</p>
         </form>
@@ -17,8 +17,8 @@
                 <img src="{% static 'interface/csv.png' %}" alt="csv" />
                 <div class="content">
                     <div class="details">
-                        <span class="name">02.csv - en cours de téléchargement</span>
-                        <span class="percent">30%</span>
+                        <span class="name" id="filename"></span>
+                        <span class="percent" id = "percent"></span>
                     </div>
                     <div class="progress-bar">
                         <div class="progress"></div>
