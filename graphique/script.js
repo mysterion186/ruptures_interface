@@ -44,6 +44,9 @@ function processData(allRows) {
 
 function makePlotly( x, y, standard_deviation ){
     var plotDiv = document.getElementById("myDiv");
+    const line_top = Math.max.apply(Math, y);
+    const line_bottom = Math.min.apply(Math, y) ;   // 1 
+    console.log(line_top, line_bottom);
     var traces = [{
         x: x,
         y: y
@@ -52,27 +55,7 @@ function makePlotly( x, y, standard_deviation ){
     var layout = { 
         title : "test",
         hovermode:'closest',
-        shapes: [{
-        'type': 'line',
-        'x0': 2.5,
-        'y0': 0,
-        'x1': 2.5,
-        'y1': 17,
-        'line': {
-            'color': 'red',
-            'width': 3,
-        }},
-        {
-        'type': 'line',
-        'x0': 9.5,
-        'y0': 0,
-        'x1': 9.5,
-        'y1': 17,
-        'line': {
-            'color': 'green',
-            'width': 3,
-        }},
-    ]};
+        shapes: []};
     
     console.log(layout["shapes"]);
 
@@ -88,11 +71,12 @@ function makePlotly( x, y, standard_deviation ){
             layout["shapes"].push({
                 'type': 'line',
                 'x0':data.points[i].x,
-                'y0':0,
+                'y0':line_bottom,
                 'x1':data.points[i].x,
-                'y1':17,
+                'y1':line_top,
                 'line': {
-                    'color': 'blue',
+                    'color': 'black',
+                     dash: 'dot',
                     'width':3,
                 }
             })
