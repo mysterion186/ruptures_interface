@@ -1,5 +1,7 @@
 import os
 
+# fonction pour "arranger" les fichiers csv 
+# par ex à l'heure actuelle faut que la première colonne (l'axe y) s'appelle 'Valeur'
 def standardize_csv(file_path,filename):
     with open(str(file_path)+"/"+filename, 'r') as f :
         a = f.readlines()

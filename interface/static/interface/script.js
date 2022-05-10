@@ -1,3 +1,4 @@
+// code pour rendre le formulaire d'upload responsive...
 const form = document.querySelector("form");
 form.reset();
 fileInput = form.querySelector(".file-input")
@@ -26,20 +27,13 @@ fileInput.onchange = (e)=>{
     }
 };
 
-// sub_button = document.querySelector(".submit_button");
-// sub_button.addEventListener("click",()=>{
-//     console.log("fichier envoyé");
-// })
-
+// fonction qui va uploader le fichier sur le serveur + afficher le fichier en cours de téléchargement et tous ceux téléchargé
 function uploadFile(name){
     var formData = new FormData(form);
     var config = {
+        // partei pour ajouter une barre de chargement, le fichier en cours de téléchargement et la liste des fichiers téléchargé
         onUploadProgress: (progressEvent) => {
-            // var filename = document.querySelector("#filename");
-            // var file_percent = document.querySelector(".progress");
-            // filename.innerHTML = formData.get("myfile")["name"];
-            // file_percent.style.width = Math.round( (progressEvent.loaded * 100) / progressEvent.total ).toString()+"%";
-            // console.log(Math.round( (progressEvent.loaded * 100) / progressEvent.total ));
+            // on indique qu'on est entrain de télécharger le fichier (affichage d'une barre de progression)
             var fileloaded = (Math.round( (progressEvent.loaded * 100) / progressEvent.total ));
             var loaded = progressEvent.loaded;
             var progressHTML = `<li class="row">         
@@ -58,7 +52,8 @@ function uploadFile(name){
             progressArea.innerHTML = progressHTML;
             console.log(loaded, progressEvent.total);
             if (loaded === progressEvent.total){
-                progressArea.innerHTML = "";
+                progressArea.innerHTML = ""; // on enlève le ficher des fichiers en cours de téléchargement et on l'ajoute dans la liste de 
+                // ceux qui ont été téléchargé
                 var uploadHTML = `<li class="row">
                                     <div class="content">
                                         <img src="/static/interface/csv.png" alt="csv" />
@@ -74,5 +69,5 @@ function uploadFile(name){
             }
         }
     };
-    axios.post('',formData, config);
+    axios.post('',formData, config); // envoie du fichier au serveur
 }
