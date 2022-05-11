@@ -40,7 +40,7 @@ function uploadFile(name){
                                     <img src="/static/interface/csv.png" alt="csv" />
                                     <div class="content">
                                         <div class="details">
-                                            <span class="name" id="filename">${name} • en cours</span>
+                                            <span class="name" id="filename">${name}</span>
                                             <span class="percent" id = "percent">${fileloaded} %</span>
                                         </div>
                                         <div class="progress-bar">
@@ -58,7 +58,7 @@ function uploadFile(name){
                                     <div class="content">
                                         <img src="/static/interface/csv.png" alt="csv" />
                                         <div class="details">
-                                            <span class="name">${name} • terminé</span>
+                                            <span class="name">${name}</span>
                                             <span class="size">${progressEvent.total}</span>
                                         </div>
                                     </div>

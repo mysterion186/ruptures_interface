@@ -81,7 +81,9 @@ function makePlotly( x, y, standard_deviation ){
         var label_x = document.querySelectorAll(".label_coordinate");
         label_x.forEach(elt => elt.addEventListener("click",() =>{delete_label(layout,elt.id);Plotly.redraw('myDiv');})); // on ajoute la possibilité de supprimer sur les labels en cliquant sur la valeur + maj du graph en enlevant ce label
         // valeurs pour connaître la taille à donner aux labels (pour pas qu'ils soient trop petits ou trop grands) ici ils feront la "taille du signal"
-        // console.log(layout["shapes"]);
+        // event pour changer la couleurs des barres verticales pour les identifier plus facilement
+        label_x.forEach(elt => elt.addEventListener("mouseover",()=>{change_color(elt.id,"blue",layout);}))
+        label_x.forEach(elt => elt.addEventListener("mouseleave",()=>{change_color(elt.id,"black",layout)}))
     });
     // button qui va valider les labels 
     valide = document.getElementById("validation")
@@ -112,7 +114,7 @@ function update_coordinate(layout,id_name) {
         layout["shapes"][i]["x0"] = Math.round(layout["shapes"][i]["x0"]);
         layout["shapes"][i]["x1"] = Math.round(layout["shapes"][i]["x1"]);
         if (coordinates[i].id !== layout["shapes"][i]["x0"]){
-            coordinates[i].innerHTML = layout["shapes"][i]["x0"];
+            coordinates[i].innerHTML = 'Label au point : '+layout["shapes"][i]["x0"];
             coordinates[i].id = layout["shapes"][i]["x0"];
         }
     }
@@ -123,9 +125,8 @@ function create_label(layout,id_name,class_name){
     var display = document.getElementById(id_name);
     var result = "";
     if (layout["shapes"].length >0 ){
-        result += '<p id='+layout["shapes"][layout["shapes"].length -1 ]["x0"]+' class="label_coordinate">'+layout["shapes"][layout["shapes"].length -1 ]["x0"] +'</p>';
+        result += '<button id='+layout["shapes"][layout["shapes"].length -1 ]["x0"]+' class="label_coordinate">Label au point : '+layout["shapes"][layout["shapes"].length -1 ]["x0"] +'</button>';
         display.innerHTML +=result;
-    
     }
     
 }
@@ -140,5 +141,20 @@ function delete_label(layout,elt_id){
     }
     var x_coord = document.getElementById(elt_id);
     x_coord.parentNode.removeChild(x_coord);
-    console.log(layout["shapes"]);
+}
+
+// fonction pour changer la couleur des barres verticales
+function change_color(elt_id, color,layout){
+    for (var i=0; i < layout["shapes"].length; i++){
+        if (layout["shapes"][i]["x0"]===parseInt(elt_id)) {
+            layout["shapes"][i]["line"]["color"] = color;
+            if(layout["shapes"][i]["line"]["color"]==="black"){
+                layout["shapes"][i]["line"]["width"]-= 3;
+            }
+            else {
+                layout["shapes"][i]["line"]["width"]+= 3;
+            }
+        }
+    }
+    Plotly.redraw('myDiv'); // maj du graph
 }

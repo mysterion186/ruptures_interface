@@ -1,7 +1,6 @@
 body{
     font-family: 'Roboto', sans-serif;
     font : roboto;
-    
 }
 
 
@@ -18,7 +17,7 @@ body{
 
 .wrapper {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     border : 5px solid;
     border-radius : 25px;
     margin-top: 28px;
@@ -27,11 +26,17 @@ body{
     width : 1000px;
 }
 
+.file{
+    
+    margin-top: 130px;
+}
 .wrapper form {
     border : 2px dashed ;
     border-radius : 25px;
     padding : 10px;
-    margin : 10px;
+    margin-left: 55px;
+    margin-bottom: 110px;
+    margin-top:130px;
     display : flex;
     cursor : pointer;
     align-items : center;
@@ -45,6 +50,7 @@ section .row{
     background : hsl(273, 30%, 47%); 
     width : 325px;
     height : 70px;
+    margin-left: 131px;
     margin-bottom :10px;
     border-radius: 15px;
     padding : 10px;
@@ -52,7 +58,7 @@ section .row{
     display :flex;
     align-items : center;
     justify-content :space-between;
-    flex-direction :end;
+
 }
 
 /* .progress-area{
@@ -149,4 +155,46 @@ h1{
     color: white;
     justify-content: flex-end;
     margin-top: 56px;
+}
+
+.file-container{
+    display:grid;
+    grid-auto-flow: column;
+    justify-content:center;
+    align-items:center;
+}
+.filename{
+    cursor: pointer;
+    display :flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    height: 50px;
+    width: 230px;
+    background-color:#444E9B;
+    margin : 10px;
+    padding: 10px;
+    border-radius: 30px;
+    color: white;
+}
+
+.label_coordinate{
+    background-color:#444E9B;
+    width: 165px;
+    height: 40px;
+    color: white;
+    display : flex;
+    justify-content:center;
+    align-items:center;
+    margin : 10px;
+    padding: 10px;
+    border-radius: 30px;
+    margin-left: 183px;
+    cursor: pointer;
+}
+
+.label{
+    display : grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top : 170px;
 }
