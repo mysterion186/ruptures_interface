@@ -155,7 +155,14 @@ function choosed_file(file_id){
 }
 
 const validation_button = document.getElementById("validation");
-validation_button.addEventListener("click",()=>{validation();})
+validation_button.addEventListener("click",()=>{
+    if (validation_button.innerHTML === "Valider les labels"){
+        validation();
+    }
+    else {
+        console.log("autre");
+    }
+    })
 function validation(){
     // on choppe le fichier 'actif'
     const choosed_file = document.querySelector(".choosed");
@@ -189,4 +196,9 @@ function set_validation_text() {
     if (processed.length === filename.length){
         validation_button.innerHTML = "Entraîner le modèle";
     }
+}
+
+function redirect(){
+    var url = baseUrl+"/train";
+    window.location(url);
 }

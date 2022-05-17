@@ -38,3 +38,8 @@ def get_label(request):
         labels = data["labels"]
         print(filename, labels)
         return JsonResponse({"status": 'Success'})
+
+# fonction qui va utiliser le code alpin pour chopper les meilleurs valeurs pour la partie prédictions 
+def train(request):
+    
+    pass 
