@@ -36,6 +36,5 @@ def get_label(request):
         data = json.loads(request.body)
         filename = data["filename"]
         labels = data["labels"]
-        print(request)
         print(filename, labels)
         return JsonResponse({"status": 'Success'})

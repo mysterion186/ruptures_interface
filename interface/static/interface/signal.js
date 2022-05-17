@@ -15,28 +15,21 @@ function makeplot(filename) {
 // fonction qui va lire et créer 2 arrays qui contiennent les valeurs des abscisses et ordonnées
 function processData(allRows) {
 
-    console.log(allRows);
     var x = [], y = [], standard_deviation = [];
 
     for (var i=0; i<allRows.length; i++) {
         row = allRows[i];
-        // console.log(row);
-        // console.log(row["Valeur"]);
         y.push( row["Valeur"] );
         x.push( i );
     }
-    // console.log( 'X',x, 'Y',y, 'SD',standard_deviation );
     makePlotly( x, y, standard_deviation ); // appel à la fonction qui prend en paramètre absisse et ordonnées pour créer le graph
 }
 // fonction qui va créer le graphe
 function makePlotly( x, y, standard_deviation ){
     var plotDiv = document.getElementById("myDiv"); // position à laquelle va s'afficher le graphe dans la page HTML
-    // var label_x = document.querySelectorAll(".label_coordinate") // position à laquelle va s'afficher les labels 
-    // label_x.forEach(elt => elt.addEventListener("click",() =>{delete_label(layout,elt.id);Plotly.redraw('myDiv');})) // on ajoute la possibilité de supprimer sur les labels en cliquant sur la valeur + maj du graph en enlevant ce label
     // valeurs pour connaître la taille à donner aux labels (pour pas qu'ils soient trop petits ou trop grands) ici ils feront la "taille du signal"
     const line_top = Math.max.apply(Math, y);
     const line_bottom = Math.min.apply(Math, y) ;   // 1 
-    // console.log(line_top, line_bottom);
     // code plotly pour indiquer quel array correspond à quoi
     var traces = [{
         x: x,
@@ -49,7 +42,7 @@ function makePlotly( x, y, standard_deviation ){
         hovermode:'closest',
         shapes: []};
     
-    // console.log(layout["shapes"]);
+
 
     Plotly.newPlot('myDiv', traces,layout,{editable: true,}); // code plotly pour afficher le graph dans la page HTMl
     
@@ -57,9 +50,6 @@ function makePlotly( x, y, standard_deviation ){
     plotDiv.on('plotly_click', function(data){
         var pts = '';
         for(var i=0; i < data.points.length; i++){
-            pts = 'x = '+data.points[i].x +'\ny = '+
-            data.points[i].y.toPrecision(4) + '\n\n';
-            // console.log("Vous voulez ajouter une rupture au point : ",data.points[i].x );
             layout["shapes"].push({
                 'type': 'line',
                 'x0':data.points[i].x,
@@ -72,8 +62,6 @@ function makePlotly( x, y, standard_deviation ){
                     'width':3,
                 }
             })
-            // var coordinates = document.querySelectorAll(".label_coordinate");
-            // console.log("plotly ",coordinates, coordinates.length);
             Plotly.redraw('myDiv'); // maj du graph
         }
         create_label(layout,"xcoords","label_coordinate"); // fonction qui va ajouter le dernier label à la page html
@@ -94,17 +82,16 @@ function makePlotly( x, y, standard_deviation ){
 
 // fonction pour mettre à jour les coordonnées sur la page HTML
 function update_coordinate(layout,id_name) {
-    var display = document.getElementById(id_name);
-    var tag = document.createElement("p");
     var coordinates = document.querySelectorAll(".label_coordinate");
-    // console.log("func ",coordinates);
     for (var i = 0; i<layout["shapes"].length; i++){
         var coordinates = document.querySelectorAll(".label_coordinate");
         layout["shapes"][i]["x0"] = Math.round(layout["shapes"][i]["x0"]);
         layout["shapes"][i]["x1"] = Math.round(layout["shapes"][i]["x1"]);
-        if (coordinates[i].id !== layout["shapes"][i]["x0"] ){
-            coordinates[i].innerHTML = 'Label au point : '+layout["shapes"][i]["x0"];
-            coordinates[i].id = layout["shapes"][i]["x0"];
+        if (coordinates[i] !== undefined){
+            if (coordinates[i].id !== layout["shapes"][i]["x0"] ){
+                coordinates[i].innerHTML = 'Label au point : '+layout["shapes"][i]["x0"];
+                coordinates[i].id = layout["shapes"][i]["x0"];
+            }
         }
     }
 }
@@ -180,9 +167,7 @@ function validation(){
     var labels_array = []
     for (var i=0; i < labels.length; i++){
         labels_array.push(labels[i].id);
-        // console.log(labels[i]);
     }
-    console.log(file_id,labels_array);
     send_data(file_id,labels_array);
     reset_page(); // on reset la page après avoir validé
 }
