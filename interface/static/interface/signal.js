@@ -163,6 +163,10 @@ function change_color(elt_id, color,layout){
 // fonction dont le but est de supprimer les lables sur le côté 
 function reset_page(){
     const labels_zone = document.querySelectorAll(".label_coordinate");
+    const choosed_file = document.querySelector(".choosed");
+    if (choosed_file !== null) {
+        choosed_file.classList.remove("choosed");
+    }
     for (var i=0; i<labels_zone.length; i++) {
         labels_zone[i].parentNode.removeChild(labels_zone[i]);
     }
@@ -171,4 +175,8 @@ function reset_page(){
 function choosed_file(file_id){
     const filename = document.getElementById(file_id);
     filename.classList.add("choosed");
+}
+
+function validation(){
+    
 }
