@@ -178,6 +178,12 @@ h1{
     color: white;
 }
 
+#xcoords{
+    max-height:470px;
+    overflow:scroll;
+
+}
+
 .label_coordinate{
     background-color:#444E9B;
     width: 165px;
@@ -197,4 +203,13 @@ h1{
     display : grid;
     grid-template-columns: 1fr 1fr;
     padding-top : 170px;
+}
+
+.choosed{
+    border : 5px solid rgb(255, 108, 87);
+    border-radius: 30px;
+}
+
+.done{
+    pointer-events: none;
 }

@@ -5,7 +5,7 @@ var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" ;
 var filename = document.querySelectorAll(".filename");
 
 // on rend chaque "fichier" clickable, lorsqu'on clique cela affiche le graphique, la fonction qui fait ça prend en paramètre l'url du fichier
-filename.forEach(elt => elt.addEventListener('click', ()=>{makeplot(baseUrl+elt.id);}));
+filename.forEach(elt => elt.addEventListener('click', ()=>{reset_page();choosed_file(elt.id);makeplot(baseUrl+elt.id);}));
 
 // fonction pour télécharger le fichier csv + créer le graphique
 function makeplot(filename) {
@@ -111,6 +111,7 @@ function update_coordinate(layout,id_name) {
     var coordinates = document.querySelectorAll(".label_coordinate");
     // console.log("func ",coordinates);
     for (var i = 0; i<layout["shapes"].length; i++){
+        var coordinates = document.querySelectorAll(".label_coordinate");
         layout["shapes"][i]["x0"] = Math.round(layout["shapes"][i]["x0"]);
         layout["shapes"][i]["x1"] = Math.round(layout["shapes"][i]["x1"]);
         if (coordinates[i].id !== layout["shapes"][i]["x0"]){
@@ -125,7 +126,7 @@ function create_label(layout,id_name,class_name){
     var display = document.getElementById(id_name);
     var result = "";
     if (layout["shapes"].length >0 ){
-        result += '<button id='+layout["shapes"][layout["shapes"].length -1 ]["x0"]+' class="label_coordinate">Label au point : '+layout["shapes"][layout["shapes"].length -1 ]["x0"] +'</button>';
+        result += '<div id='+layout["shapes"][layout["shapes"].length -1 ]["x0"]+' class="label_coordinate">Label au point : '+layout["shapes"][layout["shapes"].length -1 ]["x0"] +'</div>';
         display.innerHTML +=result;
     }
     
@@ -157,4 +158,17 @@ function change_color(elt_id, color,layout){
         }
     }
     Plotly.redraw('myDiv'); // maj du graph
+}
+
+// fonction dont le but est de supprimer les lables sur le côté 
+function reset_page(){
+    const labels_zone = document.querySelectorAll(".label_coordinate");
+    for (var i=0; i<labels_zone.length; i++) {
+        labels_zone[i].parentNode.removeChild(labels_zone[i]);
+    }
+}
+
+function choosed_file(file_id){
+    const filename = document.getElementById(file_id);
+    filename.classList.add("choosed");
 }
