@@ -85,18 +85,6 @@ function makePlotly( x, y, standard_deviation ){
         label_x.forEach(elt => elt.addEventListener("mouseover",()=>{change_color(elt.id,"blue",layout);}))
         label_x.forEach(elt => elt.addEventListener("mouseleave",()=>{change_color(elt.id,"black",layout)}))
     });
-    // button qui va valider les labels 
-    valide = document.getElementById("validation")
-    valide.addEventListener("click",()=>{  
-        var label = [];
-        for (var i = 0; i < layout["shapes"].length; i++){
-            label.push(layout["shapes"][i]["x0"]);
-        }
-        label.sort(function(a, b) {
-            return a - b;
-          });;
-        console.log(label);
-    })
     // fonction qui va à chaque fois que la souris est sûr le graphe va mettre à jour les valeurs des labels sur la page HTML
     plotDiv.addEventListener("mouseover", () =>{
         update_coordinate(layout,"xcoords");
@@ -170,6 +158,7 @@ function reset_page(){
     for (var i=0; i<labels_zone.length; i++) {
         labels_zone[i].parentNode.removeChild(labels_zone[i]);
     }
+    Plotly.purge('myDiv');
 }
 
 function choosed_file(file_id){
@@ -177,6 +166,20 @@ function choosed_file(file_id){
     filename.classList.add("choosed");
 }
 
+const validation_button = document.getElementById("validation");
+validation_button.addEventListener("click",()=>{validation();})
 function validation(){
-    
+    // on choppe le fichier 'actif'
+    const choosed_file = document.querySelector(".choosed");
+    choosed_file.classList.remove("choosed"); // on lui enlève la couleur orange
+    choosed_file.classList.add("done"); // on supprime la possibilité de cliquer sur ce fichier
+
+    const labels = document.querySelectorAll(".label_coordinate");
+    var labels_array = []
+    for (var i=0; i < labels.length; i++){
+        labels_array.push(labels[i].id);
+        // console.log(labels[i]);
+    }
+    console.log(labels_array);
+    reset_page(); // on reset la page après avoir validé
 }
