@@ -4,6 +4,9 @@ from os import listdir
 from os.path import isfile, join
 from ruptures_interface.settings import MEDIA_ROOT
 from . import tools
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json 
 
 
 # home page
@@ -25,3 +28,14 @@ def label(request):
     files = [f for f in listdir(media_path) if isfile(join(media_path, f))]
     # affichage de la page pour mettre les labesl + noms des fichiers pour avoir l'url
     return render(request,"interface/label.html",{"files":files,"MEDIA_URL":MEDIA_ROOT})
+
+# fonction qui va récupérer les labels des signaux
+@csrf_exempt
+def get_label(request):
+    if request.method == "POST": 
+        data = json.loads(request.body)
+        filename = data["filename"]
+        labels = data["labels"]
+        print(request)
+        print(filename, labels)
+        return JsonResponse({"status": 'Success'})

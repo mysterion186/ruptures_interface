@@ -102,7 +102,7 @@ function update_coordinate(layout,id_name) {
         var coordinates = document.querySelectorAll(".label_coordinate");
         layout["shapes"][i]["x0"] = Math.round(layout["shapes"][i]["x0"]);
         layout["shapes"][i]["x1"] = Math.round(layout["shapes"][i]["x1"]);
-        if (coordinates[i].id !== layout["shapes"][i]["x0"]){
+        if (coordinates[i].id !== layout["shapes"][i]["x0"] ){
             coordinates[i].innerHTML = 'Label au point : '+layout["shapes"][i]["x0"];
             coordinates[i].id = layout["shapes"][i]["x0"];
         }
@@ -150,6 +150,7 @@ function change_color(elt_id, color,layout){
 
 // fonction dont le but est de supprimer les lables sur le côté 
 function reset_page(){
+    set_validation_text();
     const labels_zone = document.querySelectorAll(".label_coordinate");
     const choosed_file = document.querySelector(".choosed");
     if (choosed_file !== null) {
@@ -171,6 +172,7 @@ validation_button.addEventListener("click",()=>{validation();})
 function validation(){
     // on choppe le fichier 'actif'
     const choosed_file = document.querySelector(".choosed");
+    const file_id = choosed_file.id;
     choosed_file.classList.remove("choosed"); // on lui enlève la couleur orange
     choosed_file.classList.add("done"); // on supprime la possibilité de cliquer sur ce fichier
 
@@ -180,6 +182,26 @@ function validation(){
         labels_array.push(labels[i].id);
         // console.log(labels[i]);
     }
-    console.log(labels_array);
+    console.log(file_id,labels_array);
+    send_data(file_id,labels_array);
     reset_page(); // on reset la page après avoir validé
+}
+
+// fonction pour envoyer les données au backend 
+function send_data(filename,label_array){
+    axios.post('add',{
+        filename : filename,
+        labels : label_array
+    }).then((response) => {
+        console.log(response);
+    })
+}
+// fonction pour mettre à jour le texte du bouton validation
+function set_validation_text() {
+    const filename = document.querySelectorAll(".filename");
+    const processed = document.querySelectorAll(".done");
+    const validation_button = document.getElementById("validation");
+    if (processed.length === filename.length){
+        validation_button.innerHTML = "Entraîner le modèle";
+    }
 }
