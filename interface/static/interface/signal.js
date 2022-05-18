@@ -19,7 +19,8 @@ function processData(allRows) {
 
     for (var i=0; i<allRows.length; i++) {
         row = allRows[i];
-        y.push( row["Valeur"] );
+        // console.log(row)
+        y.push( row["Valeur0"] );
         x.push( i );
     }
     makePlotly( x, y, standard_deviation ); // appel à la fonction qui prend en paramètre absisse et ordonnées pour créer le graph
