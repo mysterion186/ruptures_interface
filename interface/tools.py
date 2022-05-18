@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
-
+import pandas as pd
+import re
 import numpy as np
 import ruptures as rpt
 from scipy.optimize import minimize
@@ -8,14 +9,25 @@ from scipy.optimize import minimize
 # fonction pour "arranger" les fichiers csv 
 # par ex à l'heure actuelle faut que la première colonne (l'axe y) s'appelle 'Valeur'
 def standardize_csv(file_path,filename):
-    with open(str(file_path)+"/"+filename, 'r') as f :
-        a = f.readlines()
-    if a[0] != 'Valeur' : 
-        with open(str(file_path)+"/"+filename, 'w') as fw : 
-            fw.write('Valeur\n')
-            for elt in a :
-                fw.write(elt)
-    
+    clean_path = str(file_path)+"/"+str(filename)
+    # lecture csv
+    data = pd.read_csv(clean_path,float_precision="round_trip",sep='\s+')
+    # récup les noms de colonnes
+    columns_name = data.columns
+    columns_name = columns_name
+    float_match = "[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)" # regex match pour les float
+    for column in columns_name : 
+        x = re.search(float_match,column)
+        if x : # cas où le nom de la colonne est un float 
+            template = [ "Valeur"+str(k) for k in range(len(columns_name))]
+            # template = ['Valeur0', 'Valeur1']
+            temp_df = pd.DataFrame([columns_name],columns=template)
+            data.columns = template
+            data = pd.concat([temp_df,data],ignore_index=True)
+            break
+    print(data.head())
+    data.to_csv(clean_path,index=False,sep=' ')
+
 
 
 def load_json(filename: Path):
