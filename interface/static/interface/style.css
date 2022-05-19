@@ -93,7 +93,7 @@ section .row{
 }
 
 .uploaded-area{
-    max-height:230px;
+    max-height:450px;
     overflow:scroll;
 }
 
@@ -159,7 +159,7 @@ h1{
 
 .file-container{
     display:grid;
-    grid-auto-flow: column;
+    grid-template-columns: auto auto auto;
     justify-content:center;
     align-items:center;
 }
@@ -201,7 +201,7 @@ h1{
 
 .label{
     display : grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto auto;
     padding-top : 170px;
 }
 
