@@ -1,3 +1,38 @@
 body{
     background-color: aqua;
 }
+
+.loading{
+    position: absolute;
+    top : 50%;
+    left : 50%;
+    transform: translate(-50%, -50%);
+    height: 40px;
+    display : flex;
+    align-items: center;
+}
+
+.obj{
+    width: 6px;
+    height: 40px;
+    background: white;
+    margin : 0 3px;
+    border-radius: 10px;
+    animation : loading 0.8s infinite;
+}
+
+@keyframes loading{
+    0%{
+        height: 0;
+    }
+    50%{
+        height: 40px;
+    }
+    100%{
+        height: 0;
+    }
+}
+
+#content{
+    display:none;
+}
