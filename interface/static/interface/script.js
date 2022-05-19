@@ -4,26 +4,20 @@ form.reset();
 fileInput = form.querySelector(".file-input")
 progressArea = document.querySelector(".progress-area");
 uploadedArea = document.querySelector(".uploaded-area");
-console.log("Hello3");
 form.addEventListener("click", ()=>{
-    console.log("test eventlistener")
     fileInput.click();
 });
 
 fileInput.onchange = (e)=>{
-    console.log("test on change")
     document.querySelector(".progress-area").style.display = "block";
     let file = e.target.files[0];
-    console.log(e.target.files[0]/length);
     if (file){
         let fileName = file.name;
         if (fileName.length >=12 ){
             var splitname = fileName.split('.')
             fileName = splitname[0].substring(0,12)+"... ."+splitname[1];
         }
-        console.log(fileName);
         uploadFile(fileName);
-        console.log("upload appelé");
     }
 };
 
@@ -50,7 +44,6 @@ function uploadFile(name){
                                 </li>`;
 
             progressArea.innerHTML = progressHTML;
-            console.log(loaded, progressEvent.total);
             if (loaded === progressEvent.total){
                 progressArea.innerHTML = ""; // on enlève le ficher des fichiers en cours de téléchargement et on l'ajoute dans la liste de 
                 // ceux qui ont été téléchargé
@@ -70,4 +63,73 @@ function uploadFile(name){
         }
     };
     axios.post('',formData, config); // envoie du fichier au serveur
+}
+
+// fonction dont le but est de s'assurer que les fichiers labels sont envoyé par paire json-csv
+function validate_paire(){
+
+    const uploaded_file = document.querySelectorAll(".name"); // on choppe tous les fichiers qui ont été téléversés
+    var csv_array = [];
+    var json_array = [];
+    // boucle pour obtenir le nom des fichiers + séparation entre fichiers csv et json
+    for (var i = 0; i <uploaded_file.length; i++) {
+        var name = uploaded_file[i].innerText;
+        var raw_name = name.split(".");
+        var ext = raw_name[raw_name.length -1];
+        var clean_name = raw_name.slice(0, raw_name.length-1).join('.');
+        if (ext==="json"){
+            json_array.push(clean_name);
+        }
+        else if (ext==="csv"){
+            csv_array.push(clean_name);
+        }
+    }
+    if (csv_array.length !== json_array.length){
+        return false;
+    }
+    else {
+        var correct_files = [];
+        var wrong_json = [];
+        var wrong_csv = [];
+        for (var i = 0; i < json_array.length; i++) {
+            if (csv_array.find(elt => elt===json_array[i]) !== undefined) {
+                correct_files.push(json_array[i]);
+            }
+            else{
+                wrong_json.push(json_array[i]);
+                wrong_csv.push(csv_array[i]);
+            }
+        }
+        if (correct_files.length === json_array.length){
+            console.log(correct_files);
+            return true;
+        }
+        else{
+            console.log(wrong_json,wrong_csv);
+            return false;
+        }
+    }
+}
+
+const label_valide = document.querySelector("#labelise");
+label_valide.addEventListener("click",()=>{console.log(validate_paire());});
+
+
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("labelise");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
 }
