@@ -161,7 +161,8 @@ validation_button.addEventListener("click",()=>{
         validation();
     }
     else {
-        console.log("autre");
+        window.location.href=baseUrl+"prediction";
+        console.log('changement de page');
     }
     })
 function validation(){
