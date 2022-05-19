@@ -1,3 +1,7 @@
+var getUrl = window.location;
+var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" ;
+
+
 // code pour rendre le formulaire d'upload responsive...
 const form = document.querySelector("form");
 form.reset();
@@ -100,9 +104,9 @@ function validate_paire(){
                 wrong_csv.push(csv_array[i]);
             }
         }
-        if (correct_files.length === json_array.length){
+        if (correct_files.length === json_array.length && correct_files.length >1){
             console.log(correct_files);
-            return true;
+            window.location.href = baseUrl+"prediction"
         }
         else{
             console.log(wrong_json,wrong_csv);
