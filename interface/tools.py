@@ -50,11 +50,22 @@ def load_train_data(folder_train: Path):
     for filename in folder_train.iterdir():
         if filename.suffix == ".json":
             label = load_json(filename=filename)
-            signal = np.loadtxt(fname=filename.with_suffix(".csv"))
+            header = is_header(filename.with_suffix(".csv"))
+            if header:
+                signal = np.loadtxt(fname=filename.with_suffix(".csv"),skiprows=1)
+            else : 
+                signal = np.loadtxt(fname=filename.with_suffix(".csv"))
             X_train.append(signal)
             y_train.append(label)
     return X_train, y_train
+        
 
+def is_header(filename: Path):
+    regex_match = "^[a-zA-Z]"
+    with open(filename, "r") as fp:
+        a = fp.readline()
+    x =re.search(regex_match,a)
+    return x
 
 def alpin_learn(
     folder_train: Path, output_filename: Path = Path("pen_opt.json")
