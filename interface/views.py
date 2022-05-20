@@ -8,7 +8,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json 
 from random import randint
+from pathlib import Path
 
+CURRENT_FOLD = "976"
 # home page
 def index(request):
     # folder_val = randint(0, 1000) # dossier pour chaque utilisateur
@@ -27,7 +29,8 @@ def index(request):
 
 # page pour labelisé les signaux non labelisé
 def label(request):
-    folder_val = request.session["folder_val"]
+    # folder_val = request.session["folder_val"]
+    folder_val = request.session.get("folder_val",CURRENT_FOLD)
     media_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/"
     # liste de tous les fichiers se trouvant dans le dossier média
     files = [f for f in listdir(media_path) if isfile(join(media_path, f))]
@@ -47,6 +50,22 @@ def get_label(request):
             f.write(json.dumps(labels))
         return JsonResponse({"status": 'Success'})
 
-# fonction qui va utiliser le code alpin pour chopper les meilleurs valeurs pour la partie prédictions 
-def predict(request):
+# fonction qui va utiliser le code alpin_predict pour déterminer les ruptures
+def prediction(request):
+
     return render(request,"interface/prediction.html")
+
+# fonction qui va utiliser le code alpin_learn pour prédire la meilleure valeur de pénalité
+def train(request):
+    # folder_val = request.session["folder_val"]
+    folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    json_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/pen_opt.json"
+    train_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/"
+    tools.alpin_learn(Path(train_path),Path(json_path))
+    with open(json_path, "r") as f:
+        data = json.load(f)
+    
+    return JsonResponse({
+        "status": "success",
+        "body":data
+    })

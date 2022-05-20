@@ -25,7 +25,6 @@ def standardize_csv(file_path,filename):
             data.columns = template
             data = pd.concat([temp_df,data],ignore_index=True)
             break
-    print(data.head())
     data.to_csv(clean_path,index=False,sep=' ')
 
 

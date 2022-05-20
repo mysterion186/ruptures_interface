@@ -1,14 +1,21 @@
 {% extends 'interface/base.html' %} 
 {% load static %}
 {% block content %}  
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <section id="content">
-    <h1>Test affichage contenu</h1>
+    <h1 class="title">Pénalité</h1>
+    <section id="predict_wrapper">
+        <section id="penalite">
+        </section>
+        <section id="input_file">
+            zone téléchargement
+        </section>
+    </section>
 </section>      
 <section id="loading">
     <div class="box">
         <div class="b b1"></div>
         <div class="b b2"></div>
-        <button id="affiche">Réveler une vérité !</button>
     </div>
 </section>
 <script src="{% static 'interface/predict.js' %}" type="text/javascript"></script>

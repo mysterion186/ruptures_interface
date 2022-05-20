@@ -354,10 +354,39 @@ h1{
 
 #content{
     display:none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
+    margin-top : 54px;
 }
 #affiche{
     font-size:16px;
+}
+
+.title{
+    width:408px;
+    border-bottom: 2px solid black;
+    margin-left : 36px;
+}
+
+#predict_wrapper{
+    display : grid;
+    grid-template-columns: auto auto;
+}
+
+#penalite{
+    display:grid;
+    grid-template-columns: auto auto;
+    width : 568px;
+}
+
+.pen_value{
+    cursor: pointer;
+    display :flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 230px;
+    background-color:#444E9B;
+    margin : 10px;
+    padding: 10px;
+    border-radius: 30px;
+    color: white;
 }

@@ -10,5 +10,6 @@ urlpatterns = [
     path("",views.index, name="index"), # url de la page d'accueil
     path("label", views.label, name="label"),  # url de la page pour mettre des labels 
     path("add",views.get_label,name = "get_label"), # url pour ajouter des labels aux signaux
-    path("prediction",views.predict, name="prediction"), # url de la page qui va retourner les paramètres obtenues pour la prédiction
+    path("train",views.train, name="train"), # url de la page qui va retourner les paramètres obtenues pour la prédiction
+    path("prediction", views.prediction, name="prediction"), # url qui va permettre d'uploader les fichiers pour déterminer les ruptures
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT) # url pour accèder aux médias

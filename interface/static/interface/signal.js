@@ -201,6 +201,6 @@ function set_validation_text() {
 }
 
 function redirect(){
-    var url = baseUrl+"/train";
+    var url = baseUrl+"/prediction";
     window.location(url);
 }
