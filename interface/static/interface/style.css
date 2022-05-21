@@ -28,8 +28,18 @@ a{
     width : 1000px;
 }
 
+.wrapper_predict {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border : 5px solid;
+    border-radius : 25px;
+    margin-top: 28px;
+    padding : 10px;
+    height: 300px;
+    width : 310px;
+}
+
 .file{
-    
     margin-top: 130px;
 }
 .wrapper form {
@@ -46,6 +56,23 @@ a{
     flex-direction : column;
     height: 462px;
     width : 454px;
+}
+
+
+.wrapper_predict form {
+    border : 2px dashed ;
+    border-radius : 25px;
+    padding : 10px;
+    margin-left: 5px;
+    margin-bottom: 110px;
+    margin-top:40px;
+    display : flex;
+    cursor : pointer;
+    align-items : center;
+    justify-content : center;
+    flex-direction : column;
+    height: 182px;
+    width : 272px;
 }
 
 section .row{
@@ -337,6 +364,7 @@ h1{
     width: 100px;
     height: 100px;
     animation-delay: 0.2s;
+    animation-direction: reverse;
 
 }
 
@@ -364,6 +392,7 @@ h1{
     width:408px;
     border-bottom: 2px solid black;
     margin-left : 36px;
+    margin-top:54px;
 }
 
 #predict_wrapper{
@@ -378,7 +407,6 @@ h1{
 }
 
 .pen_value{
-    cursor: pointer;
     display :flex;
     align-items: center;
     justify-content: center;
@@ -387,6 +415,12 @@ h1{
     background-color:#444E9B;
     margin : 10px;
     padding: 10px;
+    margin-top : 35px;
+    margin-left:36px;
     border-radius: 30px;
     color: white;
+}
+
+#label_predic{
+    
 }

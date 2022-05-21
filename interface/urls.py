@@ -12,4 +12,5 @@ urlpatterns = [
     path("add",views.get_label,name = "get_label"), # url pour ajouter des labels aux signaux
     path("train",views.train, name="train"), # url de la page qui va retourner les paramètres obtenues pour la prédiction
     path("prediction", views.prediction, name="prediction"), # url qui va permettre d'uploader les fichiers pour déterminer les ruptures
+    path("prediction/signal",views.get_signals,name="upload_signal"), # url qui va recevoir les fichiers uploadé 
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT) # url pour accèder aux médias

@@ -69,3 +69,15 @@ def train(request):
         "status": "success",
         "body":data
     })
+
+# vue pour télécharger les signaux sur lesquels on veut prédire les ruptures
+def get_signals(request):
+    folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    # si méthode == post => on a uploadé un fichier 
+    if request.method == 'POST' and request.FILES['myfile']:
+        myfile = request.FILES['myfile'] # lecture du fichier depuis la requête
+        fs = FileSystemStorage()
+        filename = fs.save(str(folder_val)+"/test/"+myfile.name, myfile) # on enregistre le fichier
+        tools.standardize_csv(str(MEDIA_ROOT)+"/"+str(folder_val)+"/test/",myfile.name) # on le standardise 
+        # return render(request, 'interface/index.html') # on retourne la page d'accueil 
+        return JsonResponse({"status": "success"}) # on retourne la page d'accueil 

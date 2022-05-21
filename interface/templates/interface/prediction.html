@@ -7,9 +7,25 @@
     <section id="predict_wrapper">
         <section id="penalite">
         </section>
-        <section id="input_file">
-            zone téléchargement
+        <section id = "file_input">
+            <div class="wrapper_predict">
+                <form id="myform" method="post" enctype="multipart/form-data">
+                    <header>Télécharger vos fichiers ici</header>
+                    {% csrf_token %}
+                    <input type="file" class="file-input" name="myfile" hidden accept=".csv,.json">
+                    <img src="{% static 'interface/download.gif' %}" alt="download" />
+                    <p>Parcourir les fichiers locaux</p>
+                </form>
+                <section class="file">
+                    <section class="progress-area"></section>
+                <section class="uploaded-area"></section>
+            </div>
         </section>
+    </section>
+    <h1 class="title">Résultat</h1>
+    <section id="result">
+        <div id="label_predic"></div>
+        
     </section>
 </section>      
 <section id="loading">
