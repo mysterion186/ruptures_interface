@@ -1,4 +1,5 @@
 
+display_from_origin();
 const display = document.getElementById("affiche");
 display.addEventListener("click", () => {
     console.log('click');
