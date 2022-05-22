@@ -2,6 +2,8 @@
 {% load static %}
 {% block content %}  
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <section id="content">
     <p hidden id="folder_val">{{ folder_val }}</p>
     <h1 class="title">Pénalité</h1>
@@ -14,7 +16,7 @@
                     <form id="myform" method="post" enctype="multipart/form-data">
                         <header>Télécharger vos fichiers ici</header>
                         {% csrf_token %}
-                        <input type="file" class="file-input" name="myfile" hidden accept=".csv,.json">
+                        <input type="file" class="file-input" name="myfile" hidden accept=".csv">
                         <img src="{% static 'interface/download.gif' %}" alt="download" />
                         <p>Parcourir les fichiers locaux</p>
                     </form>
@@ -26,7 +28,8 @@
     <h1 class="title">Résultat</h1>
     <section id="result">
         <div id="label_predict"></div>
-        <div id="plotly">plotly graphique</div>
+        <div id="myDiv" style="width: 900px; height: 500px;"></div>
+        <div id="xcoords"></div>
     </section>
 </section>      
 <section id="loading">

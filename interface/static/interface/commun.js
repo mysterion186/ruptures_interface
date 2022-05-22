@@ -72,4 +72,16 @@ function init_form(){
     return [form,fileInput];
 }
 
-export {uploadFile,init_form};
+// fonction qui va lire et créer 2 arrays qui contiennent les valeurs des abscisses et ordonnées
+function processData(allRows,func) {
+    var x = [], y = [];
+    for (var i=0; i<allRows.length; i++) {
+        var row = allRows[i];
+        // console.log(row)
+        y.push( row["Valeur0"] );
+        x.push( i );
+    }
+    func( x, y ); // appel à la fonction qui prend en paramètre absisse et ordonnées pour créer le graph
+}
+
+export {uploadFile,init_form,processData};

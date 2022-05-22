@@ -1,3 +1,5 @@
+import {processData} from './commun.js'
+
 // partie pour récuperrer les liens des fichiers se trouvant dans le serveur, 
 // pour pouvoir faire une requête et les afficher après
 var getUrl = window.location;
@@ -9,24 +11,11 @@ filename.forEach(elt => elt.addEventListener('click', ()=>{reset_page();choosed_
 
 // fonction pour télécharger le fichier csv + créer le graphique
 function makeplot(filename) {
-    d3.csv(filename, function(data){ processData(data) } );
+    d3.csv(filename, function(data){ processData(data,makePlotly) } );
   };
 
-// fonction qui va lire et créer 2 arrays qui contiennent les valeurs des abscisses et ordonnées
-function processData(allRows) {
-
-    var x = [], y = [], standard_deviation = [];
-
-    for (var i=0; i<allRows.length; i++) {
-        row = allRows[i];
-        // console.log(row)
-        y.push( row["Valeur0"] );
-        x.push( i );
-    }
-    makePlotly( x, y, standard_deviation ); // appel à la fonction qui prend en paramètre absisse et ordonnées pour créer le graph
-}
 // fonction qui va créer le graphe
-function makePlotly( x, y, standard_deviation ){
+function makePlotly( x, y ){
     var plotDiv = document.getElementById("myDiv"); // position à laquelle va s'afficher le graphe dans la page HTML
     // valeurs pour connaître la taille à donner aux labels (pour pas qu'ils soient trop petits ou trop grands) ici ils feront la "taille du signal"
     const line_top = Math.max.apply(Math, y);

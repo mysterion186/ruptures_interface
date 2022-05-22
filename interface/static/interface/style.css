@@ -430,3 +430,12 @@ h1{
 #prediction{
     margin-left: 42px;
 }
+
+#result{
+    display : grid;
+    grid-template-columns: auto auto auto;
+}
+
+#label_predict{
+    padding-top:40px;
+}
