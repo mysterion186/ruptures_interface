@@ -22,7 +22,6 @@ const temp = init_form();
 const form = temp[0], fileInput = temp[1];
 
 fileInput.onchange = (e)=>{
-    document.querySelector(".progress-area").style.display = "block";
     let file = e.target.files[0];
     if (file){
         let fileName = file.name;

@@ -44,7 +44,13 @@ function uploadFile(name,form,post_url='',accueil=true){
                 }
             }
             else{
-                console.log('dans le elsse')
+                const folder_val = document.getElementById("folder_val"); // on choppe le dossier de la session
+                var fileArea = document.getElementById("label_predict");
+                if (loaded === progressEvent.total){
+                    var predict_name = `<h1 class="filename" id="media/${folder_val.innerHTML}/test/${name}">${name}</a></h1>`;
+                    fileArea.innerHTML +=predict_name;
+                    console.log('dans le if')
+                }
             }
         }
     };

@@ -52,8 +52,8 @@ def get_label(request):
 
 # fonction qui va utiliser le code alpin_predict pour déterminer les ruptures
 def prediction(request):
-
-    return render(request,"interface/prediction.html")
+    folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    return render(request,"interface/prediction.html",{"folder_val":folder_val})
 
 # fonction qui va utiliser le code alpin_learn pour prédire la meilleure valeur de pénalité
 def train(request):
