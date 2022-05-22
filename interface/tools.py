@@ -113,7 +113,11 @@ def alpin_predict(
     pen_opt = pen_opt_dict["pen_opt"]
     for filename in folder_test.iterdir():
         if filename.suffix==".csv":
-            signal = np.loadtxt(fname=filename)
+            header = is_header(filename.with_suffix(".csv"))
+            if header:
+                signal = np.loadtxt(fname=filename.with_suffix(".csv"),skiprows=1)
+            else : 
+                signal = np.loadtxt(fname=filename.with_suffix(".csv"))
             log_T = np.log(signal.shape[0])
             bkps_predited = rpt.KernelCPD(kernel="linear").fit_predict(
                 signal=signal, pen=pen_opt * log_T

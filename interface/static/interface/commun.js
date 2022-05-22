@@ -49,7 +49,10 @@ function uploadFile(name,form,post_url='',accueil=true){
                 if (loaded === progressEvent.total){
                     var predict_name = `<h1 class="filename" id="media/${folder_val.innerHTML}/test/${name}">${name}</a></h1>`;
                     fileArea.innerHTML +=predict_name;
-                    console.log('dans le if')
+                }
+                const predict_button = document.getElementById("prediction"); // on choppe le bouton prédire pour le rendre clickable (par défaut non clickable mais comme on vient d'upload un fichier mtn c'est bon)
+                if (predict_button.classList.contains("done")){
+                    predict_button.classList.remove("done");
                 }
             }
         }

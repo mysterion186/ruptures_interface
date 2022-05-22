@@ -9,14 +9,17 @@
         <section id="penalite">
         </section>
         <section id = "file_input">
-            <div class="wrapper_predict">
-                <form id="myform" method="post" enctype="multipart/form-data">
-                    <header>Télécharger vos fichiers ici</header>
-                    {% csrf_token %}
-                    <input type="file" class="file-input" name="myfile" hidden accept=".csv,.json">
-                    <img src="{% static 'interface/download.gif' %}" alt="download" />
-                    <p>Parcourir les fichiers locaux</p>
-                </form>
+            <div class="predict_grid">
+                <div class="wrapper_predict">
+                    <form id="myform" method="post" enctype="multipart/form-data">
+                        <header>Télécharger vos fichiers ici</header>
+                        {% csrf_token %}
+                        <input type="file" class="file-input" name="myfile" hidden accept=".csv,.json">
+                        <img src="{% static 'interface/download.gif' %}" alt="download" />
+                        <p>Parcourir les fichiers locaux</p>
+                    </form>
+                </div>
+                <div class="validation done" id="prediction">Prédire</div>
             </div>
         </section>
     </section>

@@ -32,3 +32,9 @@ fileInput.onchange = (e)=>{
         uploadFile(fileName,form,'prediction/signal',false);
     }
 };
+
+// fait appel au back pour lancer le code alpin_predict 
+const prediction_button = document.getElementById("prediction");
+prediction_button.addEventListener("click", () => {
+    axios.get("prediction/predict").then((response)=>{console.log(response);});
+})

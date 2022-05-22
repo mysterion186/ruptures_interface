@@ -81,3 +81,11 @@ def get_signals(request):
         tools.standardize_csv(str(MEDIA_ROOT)+"/"+str(folder_val)+"/test/",myfile.name) # on le standardise 
         # return render(request, 'interface/index.html') # on retourne la page d'accueil 
         return JsonResponse({"status": "success"}) # on retourne la page d'accueil 
+
+# "vue" pour faire appel à alpin_predict 
+def predict(request):
+    folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    test_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/test/"
+    json_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/pen_opt.json"
+    tools.alpin_predict(Path(test_path),Path(json_path))
+    return JsonResponse({"status": "success"})

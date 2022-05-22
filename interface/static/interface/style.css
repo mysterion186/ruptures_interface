@@ -248,7 +248,7 @@ h1{
     grid-template-columns: auto auto;
 }
 
-#validation{
+.validation{
     background: linear-gradient(93.03deg, #FFCC2F 17.08%, #FF6C57 52.57%);
     display :flex;
     align-items: center;
@@ -421,6 +421,12 @@ h1{
     color: white;
 }
 
-#label_predic{
-    
+.predict_grid{
+    display : grid;
+    align-items: center;
+    justify-content: center;
+}
+
+#prediction{
+    margin-left: 42px;
 }
