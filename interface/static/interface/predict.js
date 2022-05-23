@@ -3,7 +3,7 @@ var getUrl = window.location;
 var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" ;
 
 const folder_val = document.getElementById("folder_val"); // on choppe le dossier de la session
-console.log("appelle axios ",baseUrl+'train')
+// console.log("appelle axios ",baseUrl+'train')
 axios(baseUrl+'train').then((response) => {
     console.log(response);
     const load = document.getElementById("loading");
@@ -53,13 +53,11 @@ function reset_choosed_file(){
 }
 // fonction pour pré-process le signal sélectionné
 function makeplot(filename) {
-    d3.csv(filename, function(data){ processData(data,makePlotly) } );
+    d3.dsv(' ')(filename, function(data){ processData(data,makePlotly) } );
   };
 // fonction qui va afficher les graphiques 
-function makePlotly( x, y ){
+function makePlotly( traces,line_bottom,line_top ){
     const plotDiv = document.getElementById("myDiv");
-    const line_top = Math.max.apply(Math, y);
-    const line_bottom = Math.min.apply(Math, y) ;   // 1 
     const display = document.getElementById("xcoords");
     const select_file = document.querySelector(".choosed"); // récuperration du fichiers choisi
     var layout = { 
@@ -87,10 +85,6 @@ function makePlotly( x, y ){
         }
         Plotly.redraw('myDiv');
     });
-    var traces = [{
-        x: x,
-        y: y
-    }];
     
     Plotly.newPlot('myDiv', traces,layout,{editable: false,}); // code plotly pour afficher le graph dans la page HTMl
 }

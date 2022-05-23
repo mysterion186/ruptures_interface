@@ -95,4 +95,4 @@ def coord(request,filename,folder_val):
     filename_temp = filename.split(".")[:-1]
     clean_filename = '.'.join(filename_temp)
     array = tools.load_json(Path(str(MEDIA_ROOT)+"/"+str(folder_val)+"/test/"+clean_filename+".pred.json"))
-    return JsonResponse({"filename":filename,'folder_val':folder_val,'array':array})
+    return JsonResponse({"filename":filename,'folder_val':folder_val,'array':array[:-1]})

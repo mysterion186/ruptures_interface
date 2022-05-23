@@ -74,14 +74,36 @@ function init_form(){
 
 // fonction qui va lire et créer 2 arrays qui contiennent les valeurs des abscisses et ordonnées
 function processData(allRows,func) {
-    var x = [], y = [];
-    for (var i=0; i<allRows.length; i++) {
-        var row = allRows[i];
-        // console.log(row)
-        y.push( row["Valeur0"] );
-        x.push( i );
+    const columns = Object.keys(allRows[0]); // on choppe le nom des colonnes 
+    var traces = Array(columns.length); // on crée un array vide avec le bon nombre de colonne
+    // on initialise l'objet traces 
+    for (var i = 0; i < traces.length; i++) {
+        traces[i] = { x : [],y : [],type:'scatter'};
     }
-    func( x, y ); // appel à la fonction qui prend en paramètre absisse et ordonnées pour créer le graph
+    for (var i=0; i<allRows.length; i++) { // boucle sur les lignes du fichier
+        for (var k=0; k<columns.length;k++){
+            var row = allRows[i];
+            traces[k]["y"].push(row[columns[k]]);
+            traces[k]["x"].push(i);
+            traces[k]["name"] = columns[k];
+        }
+    }
+
+    // boucle pour déterminer la plus grande et la plus petite valeur du fichier csv 
+    var line_top = 0;
+    var line_bottom = 0;
+    for (var i=0; i<traces.length; i++){
+        var temp_top = Math.max.apply(Math,traces[i]['y']);
+        var temp_bottom = Math.min.apply(Math, traces[i]['y']) ; 
+        // console.log("temp ",temp_top, temp_bottom); 
+        if (temp_top > line_top) {
+            line_top = temp_top;
+        }
+        if (line_bottom > temp_bottom) {
+            line_bottom = temp_bottom;
+        }
+    }
+    func( traces,line_bottom,line_top ); // appel à la fonction qui prend en paramètre absisse et ordonnées pour créer le graph
 }
 
 export {uploadFile,init_form,processData};

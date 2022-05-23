@@ -11,21 +11,12 @@ filename.forEach(elt => elt.addEventListener('click', ()=>{reset_page();choosed_
 
 // fonction pour télécharger le fichier csv + créer le graphique
 function makeplot(filename) {
-    d3.csv(filename, function(data){ processData(data,makePlotly) } );
+    d3.dsv(' ')(filename, function(data){ processData(data,makePlotly) } );
   };
 
 // fonction qui va créer le graphe
-function makePlotly( x, y ){
+function makePlotly( traces,line_bottom,line_top ){
     var plotDiv = document.getElementById("myDiv"); // position à laquelle va s'afficher le graphe dans la page HTML
-    // valeurs pour connaître la taille à donner aux labels (pour pas qu'ils soient trop petits ou trop grands) ici ils feront la "taille du signal"
-    const line_top = Math.max.apply(Math, y);
-    const line_bottom = Math.min.apply(Math, y) ;   // 1 
-    // code plotly pour indiquer quel array correspond à quoi
-    var traces = [{
-        x: x,
-        y: y
-    }];
-
     // objet layout qui contient le titre et par la suite les barres verticales qui représentent les labels
     var layout = { 
         title : "test",

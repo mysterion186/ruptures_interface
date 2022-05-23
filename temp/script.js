@@ -136,7 +136,7 @@ function makePlotly(traces,line_bottom,line_top ){
         }
     });
 };
-makeplot("1.csv");
+
 
 // // function to process csv file
 // var temp = [];
@@ -156,4 +156,4 @@ makeplot("1.csv");
 //     fn(x);
 // }
 
-makeplot("1.csv");
+makeplot("2.csv");
