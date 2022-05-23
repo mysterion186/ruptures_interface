@@ -98,11 +98,15 @@ def predict(request):
     return JsonResponse({"status": "success"})
 
 # "vue" pour chopper les indices des fichiers 
-def coord(request,filename,folder_val):
+def coord(request,filename,folder_val,folder_name):
     filename_temp = filename.split(".")[:-1]
     clean_filename = '.'.join(filename_temp)
-    array = tools.load_json(Path(str(MEDIA_ROOT)+"/"+str(folder_val)+"/test/"+clean_filename+".pred.json"))
-    return JsonResponse({"filename":filename,'folder_val':folder_val,'array':array[:-1]})
+    ext = ".pred.json" if folder_name =="test" else ".json"
+    try : 
+        array = tools.load_json(Path(str(MEDIA_ROOT)+"/"+str(folder_val)+"/"+str(folder_name)+"/"+clean_filename+ext))
+        return JsonResponse({"status":"success","filename":filename,'folder_val':folder_val,'array':array[:-1]})
+    except FileNotFoundError :
+        return JsonResponse({"status":"FileNotFoundError","filename":filename,'folder_val':folder_val})
 
 
 # "vue" pour supprimer un dossier dans le cas où l'utilisateur a fait une erreur

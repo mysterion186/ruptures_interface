@@ -6,13 +6,14 @@
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
 <section class="label">
+    <p hidden id="folder_val">{{ folder_val }}</p>
     <div id="myDiv" style="width: 900px; height: 500px;"><!-- Plotly chart will be drawn inside this DIV --></div> 
     <div id="xcoords"></div>
 </section>
 <section class="files">
     <div class="file-container">
         {% for myfile in files %}
-            <h1 class="filename" id="media/{{ folder_val }}/train/{{ myfile }}"> media/{{ myfile }}</a></h1>
+            <h1 class="filename" id="media/{{ folder_val }}/train/{{ myfile }}">{{ myfile }}</a></h1>
         {% endfor %}
     </div>
     <div class="validation" id="validation">Valider les labels</div>

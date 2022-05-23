@@ -22,8 +22,33 @@ function makePlotly( traces,line_bottom,line_top ){
         title : "test",
         hovermode:'closest',
         shapes: []};
-    
-
+    const folder_val = document.getElementById("folder_val"); // on choppe le dossier de la session
+    const selected_file = document.querySelector(".choosed");
+    axios.get(`prediction/coord/${folder_val.innerHTML}/train/${selected_file.innerHTML}`).then((response) => {
+        const label_array = response["data"]["array"];
+        for (var i = 0; i < label_array.length; i++){
+            layout["shapes"].push({
+                'type': 'line',
+                'x0':label_array[i],
+                'y0':line_bottom,
+                'x1':label_array[i],
+                'y1':line_top,
+                'line': {
+                    'color': 'black',
+                     dash: 'dot',
+                    'width':3,
+                }
+            })
+            create_label(layout,"xcoords","label_coordinate"); // fonction qui va ajouter le dernier label à la page html
+            var label_x = document.querySelectorAll(".label_coordinate");
+            label_x.forEach(elt => elt.addEventListener("click",() =>{delete_label(layout,elt.id);Plotly.redraw('myDiv');})); // on ajoute la possibilité de supprimer sur les labels en cliquant sur la valeur + maj du graph en enlevant ce label
+            // valeurs pour connaître la taille à donner aux labels (pour pas qu'ils soient trop petits ou trop grands) ici ils feront la "taille du signal"
+            // event pour changer la couleurs des barres verticales pour les identifier plus facilement
+            label_x.forEach(elt => elt.addEventListener("mouseover",()=>{change_color(elt.id,"blue",layout);}))
+            label_x.forEach(elt => elt.addEventListener("mouseleave",()=>{change_color(elt.id,"black",layout)}))
+        }
+        Plotly.redraw('myDiv');
+    });
 
     Plotly.newPlot('myDiv', traces,layout,{editable: true,}); // code plotly pour afficher le graph dans la page HTMl
     
