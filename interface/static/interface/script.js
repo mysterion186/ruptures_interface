@@ -45,6 +45,10 @@ function validate_paire(){
     if (csv_array.length !== json_array.length){
         return false;
     }
+    else if (json_array.length===0){
+        console.log("Cas où il n'y a que des fichiers non labellisé, on va sur la page label");
+        // window.location.href = baseUrl+"label";
+    }
     else {
         var correct_files = [];
         var wrong_json = [];
@@ -60,7 +64,8 @@ function validate_paire(){
         }
         if (correct_files.length === json_array.length && correct_files.length >1){
             console.log(correct_files);
-            window.location.href = baseUrl+"prediction"
+            console.log("On doit aller à la page prédictions")
+            window.location.href = baseUrl+"prediction";
         }
         else{
             console.log(wrong_json,wrong_csv);
@@ -89,5 +94,7 @@ btn.onclick = function() {
 
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
-  modal.style.display = "none";
+    axios.get('delete').then((response)=>{console.log(response);});
+    modal.style.display = "none";
+    window.location.reload(); 
 }

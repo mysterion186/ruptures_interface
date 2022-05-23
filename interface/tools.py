@@ -15,10 +15,11 @@ def standardize_csv(file_path,filename):
     # récup les noms de colonnes
     columns_name = data.columns
     columns_name = columns_name
-    float_match = "[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)" # regex match pour les float
+    # float_match = "[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)" # regex match pour les float
+    regex_match = "^[a-zA-Z]"
     for column in columns_name : 
-        x = re.search(float_match,column)
-        if x : # cas où le nom de la colonne est un float 
+        x = re.search(regex_match,column)
+        if not x : # cas où le nom de la colonne est un float 
             template = [ "Valeur"+str(k) for k in range(len(columns_name))]
             # template = ['Valeur0', 'Valeur1']
             temp_df = pd.DataFrame([columns_name],columns=template)

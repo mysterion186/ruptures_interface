@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 from os import listdir
+import os,shutil
 from os.path import isfile, join
 from ruptures_interface.settings import MEDIA_ROOT
 from . import tools
@@ -22,7 +23,8 @@ def index(request):
         myfile = request.FILES['myfile'] # lecture du fichier depuis la requête
         fs = FileSystemStorage()
         filename = fs.save(str(folder_val)+"/train/"+myfile.name, myfile) # on enregistre le fichier
-        tools.standardize_csv(str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/",myfile.name) # on le standardise 
+        if myfile.name.split(".")[-1]=="csv": # on standardise que les fichiers csv
+            tools.standardize_csv(str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/",myfile.name) # on le standardise 
         return render(request, 'interface/index.html') # on retourne la page d'accueil
     return render(request,"interface/index.html")
 
@@ -96,3 +98,11 @@ def coord(request,filename,folder_val):
     clean_filename = '.'.join(filename_temp)
     array = tools.load_json(Path(str(MEDIA_ROOT)+"/"+str(folder_val)+"/test/"+clean_filename+".pred.json"))
     return JsonResponse({"filename":filename,'folder_val':folder_val,'array':array[:-1]})
+
+
+# "vue" pour supprimer un dossier dans le cas où l'utilisateur a fait une erreur
+def delete_folder(request):
+    folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    folder_path = str(MEDIA_ROOT)+"/"+str(folder_val)
+    shutil.rmtree(folder_path)
+    return JsonResponse({"status":"success"})
