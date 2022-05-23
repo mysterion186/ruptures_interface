@@ -47,7 +47,12 @@ def get_label(request):
         filename = data["filename"]
         labels = data["labels"]
         labels = [int(x) for x in labels] # conversion des str en int
+        with open(filename,"r") as f : 
+            a = f.readlines() 
+        if labels[-1] != len(a) or labels[-1] != len(a)-1:
+            labels.append(len(a[1:]))
         # création d'un fichier json qui contient les indices des labels, porte le même nom que le fichier csv
+        labels.sort() # tri la liste dans la cas où les labels n'ont pas été posées dans le bon ordre
         with open(filename.split(".")[0]+".json","w") as f : 
             f.write(json.dumps(labels))
         return JsonResponse({"status": 'Success'})
