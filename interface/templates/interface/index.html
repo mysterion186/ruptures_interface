@@ -31,8 +31,7 @@
     </div>
 </section>
 <section id="button">
-    <button class ="label_button" id="labelise">Continuer avec des signaux labelisés</button>
-    <a href="{% url 'interface:label' %}"><button class ="label_button" id="non_labelise">Continuer avec des signaux non labelisés</button></a>
+    <a href="{% url 'interface:label' %}"><button class ="label_button" id="non_labelise">Passer à l'étape suivante</button></a>
 </section>
 <script src="{% static 'interface/script.js' %}" type="module" ></script>
 {% endblock %}

@@ -208,11 +208,17 @@ h1{
 }
 
 #xcoords{
+    /* display : grid; */
+    grid-template-columns: auto auto;
+    max-height:470px;
+    overflow:scroll;
+}
+
+#xcoords_predict{
     display : grid;
     grid-template-columns: auto auto;
     max-height:470px;
     overflow:scroll;
-
 }
 
 .label_coordinate{
