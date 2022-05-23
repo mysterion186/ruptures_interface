@@ -35,7 +35,7 @@ def label(request):
     folder_val = request.session.get("folder_val",CURRENT_FOLD)
     media_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/"
     # liste de tous les fichiers se trouvant dans le dossier média
-    files = [f for f in listdir(media_path) if isfile(join(media_path, f))]
+    files = [f for f in listdir(media_path) if isfile(join(media_path, f)) and f.split(".")[-1]=="csv"]
     # affichage de la page pour mettre les labesl + noms des fichiers pour avoir l'url
     return render(request,"interface/label.html",{"files":files,"MEDIA_URL":media_path,"folder_val":folder_val})
 
@@ -85,7 +85,8 @@ def get_signals(request):
         myfile = request.FILES['myfile'] # lecture du fichier depuis la requête
         fs = FileSystemStorage()
         filename = fs.save(str(folder_val)+"/test/"+myfile.name, myfile) # on enregistre le fichier
-        tools.standardize_csv(str(MEDIA_ROOT)+"/"+str(folder_val)+"/test/",myfile.name) # on le standardise 
+        if myfile.name.split(".")[-1]=="csv": # on standardise que les fichiers csv
+            tools.standardize_csv(str(MEDIA_ROOT)+"/"+str(folder_val)+"/test/",myfile.name) # on le standardise       
         # return render(request, 'interface/index.html') # on retourne la page d'accueil 
         return JsonResponse({"status": "success"}) # on retourne la page d'accueil 
 
@@ -104,6 +105,13 @@ def coord(request,filename,folder_val,folder_name):
     ext = ".pred.json" if folder_name =="test" else ".json"
     try : 
         array = tools.load_json(Path(str(MEDIA_ROOT)+"/"+str(folder_val)+"/"+str(folder_name)+"/"+clean_filename+ext))
+        # si l'utilisateur veut prédire les ruptures mais met en même temps un fichier  json on envoie les valeurs en plus au front pour superposer les 2
+        if (os.path.exists(str(MEDIA_ROOT)+"/"+str(folder_val)+"/"+str(folder_name)+"/"+clean_filename+".true.json")) and folder_name =="test" : 
+            print("dans le if exists")
+            labels = tools.load_json(Path(str(MEDIA_ROOT)+"/"+str(folder_val)+"/"+str(folder_name)+"/"+clean_filename+".true.json")) 
+            return JsonResponse({"status":"success","filename":filename,'folder_val':folder_val,'array':array[:-1],'labels':labels[:-1]})
+        else : 
+            print("dans le else")
         return JsonResponse({"status":"success","filename":filename,'folder_val':folder_val,'array':array[:-1]})
     except FileNotFoundError :
         return JsonResponse({"status":"FileNotFoundError","filename":filename,'folder_val':folder_val})

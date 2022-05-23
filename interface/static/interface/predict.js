@@ -58,21 +58,21 @@ function makeplot(filename) {
 // fonction qui va afficher les graphiques 
 function makePlotly( traces,line_bottom,line_top ){
     const plotDiv = document.getElementById("myDiv");
-    const display = document.getElementById("xcoords");
+    const display = document.getElementById("left");
     const select_file = document.querySelector(".choosed"); // récuperration du fichiers choisi
     var layout = { 
         title : "test",
         hovermode:'closest',
         shapes: []};
     // code plotly pour indiquer quel array correspond à quoi
-    axios.get(`prediction/coord/${folder_val.innerHTML}/${select_file.innerHTML}`).then((response)=>{
-        const label_value = response["data"]["array"];
-        for (let i=0; i< label_value.length;i++){
+    axios.get(`prediction/coord/${folder_val.innerHTML}/test/${select_file.innerHTML}`).then((response)=>{
+        const predicted_value = response["data"]["array"];
+        for (let i=0; i< predicted_value.length;i++){
             layout["shapes"].push({
                 'type': 'line',
-                'x0':label_value[i],
+                'x0':predicted_value[i],
                 'y0':line_bottom,
-                'x1':label_value[i],
+                'x1':predicted_value[i],
                 'y1':line_top,
                 'line': {
                     'color': 'black',
@@ -80,8 +80,29 @@ function makePlotly( traces,line_bottom,line_top ){
                     'width':3,
                 }
             })
-            var result = '<div id='+layout["shapes"][i]["x0"]+' class="label_coordinate">Label au point : '+layout["shapes"][i]["x0"] +'</div>';
+            var result = '<div id='+layout["shapes"][i]["x0"]+' class="label_coordinate predict">Rupture détectée au point : '+layout["shapes"][i]["x0"] +'</div>';
             display.innerHTML +=result;
+        }
+        const label_value = response["data"]["labels"];
+        const display_r = document.getElementById("right");
+        if (label_value !== undefined) {
+            const lenght_layout = layout["shapes"].length;
+            for (let i=0; i< label_value.length;i++){
+                layout["shapes"].push({
+                    'type': 'line',
+                    'x0':label_value[i],
+                    'y0':line_bottom,
+                    'x1':label_value[i],
+                    'y1':line_top,
+                    'line': {
+                        'color': 'red',
+                        dash: 'dot',
+                        'width':3,
+                    }
+                })
+                var result = '<div id='+layout["shapes"][lenght_layout+i]["x0"]+' class="label_coordinate predict_label">Label au point : '+layout["shapes"][lenght_layout+i]["x0"] +'</div>';
+                display_r.innerHTML +=result;
+            }
         }
         Plotly.redraw('myDiv');
     });
@@ -92,7 +113,6 @@ function makePlotly( traces,line_bottom,line_top ){
 // fonction pour reset la page
 function reset_page(){
     const labels_zone = document.querySelectorAll(".label_coordinate");
-    const choosed_file = document.querySelector(".choosed");
     for (var i=0; i<labels_zone.length; i++) {
         labels_zone[i].parentNode.removeChild(labels_zone[i]);
     }

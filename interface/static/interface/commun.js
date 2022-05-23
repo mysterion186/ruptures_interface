@@ -47,8 +47,16 @@ function uploadFile(name,form,post_url='',accueil=true){
                 const folder_val = document.getElementById("folder_val"); // on choppe le dossier de la session
                 var fileArea = document.getElementById("label_predict");
                 if (loaded === progressEvent.total){
-                    var predict_name = `<h1 class="filename" id="media/${folder_val.innerHTML}/test/${name}">${name}</a></h1>`;
-                    fileArea.innerHTML +=predict_name;
+                    const detect_ext = name.split(".");
+                    console.log(detect_ext[detect_ext.length-1]);
+                    if (detect_ext[detect_ext.length-1]==="csv"){
+                        var predict_name = `<h1 class="filename" id="media/${folder_val.innerHTML}/test/${name}">${name}</a></h1>`;
+                        fileArea.innerHTML +=predict_name;
+                    }
+                    else {
+                        var predict_name = `<h1 class="filename done" id="media/${folder_val.innerHTML}/test/${name}">${name}</a></h1>`;
+                        fileArea.innerHTML +=predict_name;
+                    }
                 }
                 const predict_button = document.getElementById("prediction"); // on choppe le bouton prédire pour le rendre clickable (par défaut non clickable mais comme on vient d'upload un fichier mtn c'est bon)
                 if (predict_button.classList.contains("done")){

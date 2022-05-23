@@ -16,7 +16,7 @@
                     <form id="myform" method="post" enctype="multipart/form-data">
                         <header>Télécharger vos fichiers ici</header>
                         {% csrf_token %}
-                        <input type="file" class="file-input" name="myfile" hidden accept=".csv">
+                        <input type="file" class="file-input" name="myfile" hidden accept=".csv, .json">
                         <img src="{% static 'interface/download.gif' %}" alt="download" />
                         <p>Parcourir les fichiers locaux</p>
                     </form>
@@ -29,7 +29,10 @@
     <section id="result">
         <div id="label_predict"></div>
         <div id="myDiv" style="width: 900px; height: 500px;"></div>
-        <div id="xcoords"></div>
+        <div id="xcoords">
+            <div id="left"></div>
+            <div id="right"></div>
+        </div>
     </section>
 </section>      
 <section id="loading">

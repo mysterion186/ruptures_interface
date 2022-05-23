@@ -47,7 +47,7 @@ function validate_paire(){
     }
     else if (json_array.length===0){
         console.log("Cas où il n'y a que des fichiers non labellisé, on va sur la page label");
-        // window.location.href = baseUrl+"label";
+        window.location.href = baseUrl+"label";
     }
     else {
         var correct_files = [];

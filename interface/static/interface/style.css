@@ -208,6 +208,8 @@ h1{
 }
 
 #xcoords{
+    display : grid;
+    grid-template-columns: auto auto;
     max-height:470px;
     overflow:scroll;
 
@@ -228,6 +230,26 @@ h1{
     cursor: pointer;
 }
 
+.predict{
+    margin-left:0;
+}
+
+
+
+.predict_label{
+    background-color:#FF6C57;
+    width: 165px;
+    height: 40px;
+    color: white;
+    display : flex;
+    justify-content:center;
+    align-items:center;
+    margin : 10px;
+    padding: 10px;
+    border-radius: 30px;
+    /* margin-left: 183px; */
+    cursor: pointer;
+}
 .label{
     display : grid;
     grid-template-columns: auto auto;
