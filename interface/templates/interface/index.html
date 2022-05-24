@@ -3,19 +3,6 @@
 {% block content %}         
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-<div id="myModal" class="modal">
-
-    <!-- Modal content -->
-    <div class="modal-content">
-      <p id="model_text">
-          Pour travailler avec des fichiers labellisé, il faut respecter la convention de nommage suivante : 
-          <code>x.csv</code> (signal) <code>x.csv</code> (label) où <code>x</code> correspond au nom du fichier
-      </p>
-      <span class="close">C'est compris !</span>
-    </div>
-  
-</div>
-
 <section id = "file_input">
     <div class="wrapper">
         <form id="myform" method="post" enctype="multipart/form-data">
@@ -31,7 +18,7 @@
     </div>
 </section>
 <section id="button">
-    <a href="{% url 'interface:label' %}"><button class ="label_button" id="non_labelise">Passer à l'étape suivante</button></a>
+    <a href="{% url 'interface:label' %}" class="done"><div class ="label_button" id="non_labelise">Passer à l'étape suivante</div></a>
 </section>
 <script src="{% static 'interface/script.js' %}" type="module" ></script>
 {% endblock %}

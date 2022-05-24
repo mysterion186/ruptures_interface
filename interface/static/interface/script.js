@@ -12,6 +12,11 @@ const form = temp[0], fileInput = temp[1];
 fileInput.onchange = (e)=>{
     document.querySelector(".progress-area").style.display = "block";
     let file = e.target.files[0];
+    // on rend le bouton "passer à l'étape suivante clickable" 
+    const next_step = document.querySelector(".done");
+    if (next_step !== undefined){
+        next_step.classList.remove("done");
+    }
     if (file){
         let fileName = file.name;
         if (fileName.length >=12 ){
@@ -76,25 +81,3 @@ function validate_paire(){
 
 const label_valide = document.querySelector("#labelise");
 label_valide.addEventListener("click",()=>{console.log(validate_paire());});
-
-
-// Get the modal
-var modal = document.getElementById("myModal");
-
-// Get the button that opens the modal
-var btn = document.getElementById("labelise"); // bouton pour vérifier si les paires sont respectées
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks the button, open the modal 
-btn.onclick = function() {
-  modal.style.display = "block";
-}
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-    axios.get('delete').then((response)=>{console.log(response);});
-    modal.style.display = "none";
-    window.location.reload(); 
-}

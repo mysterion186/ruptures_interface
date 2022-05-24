@@ -315,10 +315,9 @@ h1{
   }
 
 #button{
-    display : grid;
-    grid-template-columns: auto auto;
-    justify-content: space-around;
-    align-items: center;
+    display : flex;
+    justify-content: flex-end;
+    align-content: flex-end;
 }
 .modal {
     display: none; /* Hidden by default */
