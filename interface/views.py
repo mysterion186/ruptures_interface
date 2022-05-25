@@ -107,11 +107,8 @@ def coord(request,filename,folder_val,folder_name):
         array = tools.load_json(Path(str(MEDIA_ROOT)+"/"+str(folder_val)+"/"+str(folder_name)+"/"+clean_filename+ext))
         # si l'utilisateur veut prédire les ruptures mais met en même temps un fichier  json on envoie les valeurs en plus au front pour superposer les 2
         if (os.path.exists(str(MEDIA_ROOT)+"/"+str(folder_val)+"/"+str(folder_name)+"/"+clean_filename+".true.json")) and folder_name =="test" : 
-            print("dans le if exists")
             labels = tools.load_json(Path(str(MEDIA_ROOT)+"/"+str(folder_val)+"/"+str(folder_name)+"/"+clean_filename+".true.json")) 
             return JsonResponse({"status":"success","filename":filename,'folder_val':folder_val,'array':array[:-1],'labels':labels[:-1]})
-        else : 
-            print("dans le else")
         return JsonResponse({"status":"success","filename":filename,'folder_val':folder_val,'array':array[:-1]})
     except FileNotFoundError :
         return JsonResponse({"status":"FileNotFoundError","filename":filename,'folder_val':folder_val})
@@ -123,3 +120,6 @@ def delete_folder(request):
     folder_path = str(MEDIA_ROOT)+"/"+str(folder_val)
     shutil.rmtree(folder_path)
     return JsonResponse({"status":"success"})
+
+def aide(request):
+    return render(request,'interface/aide.html')

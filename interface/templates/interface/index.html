@@ -4,6 +4,10 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 <section id = "file_input">
+    <div class="helper">
+        Sur cette page, vous devez mettre des signaux (fichier <code>csv</code>) et des fichiers <code>json</code> (optionnel, mais dois respecter une certaine convention de nommage) pour pouvoir entraîner le modèle.
+        <a href="{% url 'interface:aide' %}" target="_blank">Cliquez ici pour avoir plus d'informations</a>
+    </div>
     <div class="wrapper">
         <form id="myform" method="post" enctype="multipart/form-data">
             <header>Télécharger vos fichiers ici</header>

@@ -7,7 +7,8 @@ a{
     text-decoration: none;
 }
 #file_input{
-    display:flex;
+    display:grid;
+    grid-template-columns: auto;
     align-items:center;
     justify-content:center;
 }
@@ -178,12 +179,18 @@ h1{
 }
 
 .log{
-    position : fixed;
+    position : relative;
     right: 23px;
     font-size : 29px;
     color: white;
     justify-content: flex-end;
     margin-top: 56px;
+}
+
+#log_wrapper{
+    display : flex;
+    align-items : center;
+    justify-content:flex-end;
 }
 
 .file-container{
@@ -259,7 +266,7 @@ h1{
 .label{
     display : grid;
     grid-template-columns: auto auto;
-    padding-top : 170px;
+    padding-top : 100px;
 }
 
 .choosed{
@@ -302,7 +309,7 @@ h1{
     width: 230px;
     background-color:#444E9B;
     margin : 10px;
-    margin-top : 40px;
+    margin-top : 10px;
     padding: 10px;
     border-radius: 30px;
     color: white;
@@ -465,4 +472,91 @@ h1{
 
 #label_predict{
     padding-top:40px;
+}
+
+#aide p{
+    text-align: justify;
+    padding: 20px;
+    margin : 20px;
+}
+
+#aide{
+    display : flex;
+    justify-content:center;
+    align-items:center;
+}
+
+#aide .title{
+    border-bottom: 2px solid #ff6c57;
+    border-top: 2px solid #ff6c57;
+    width: 100%;
+    margin-left: 0;
+    margin-bottom: 15px;
+}
+
+code{
+    font-size:18px;
+}
+
+section #image{
+    display : grid;
+    grid-template-columns: auto;
+    align-items:center;
+    justify-content:center;
+}
+
+#aide .img{
+    display : grid;
+    grid-template-columns: auto;
+    /* grid-template-rows: auto auto; */
+}
+
+.img img{
+    display : flex;
+    align-items:center;
+    justify-content:center;
+}
+.subtitle{
+    margin-top : 2px !important;
+    padding : 0 !important;
+    text-decoration: underline;
+    justify-content: center;
+    align-items: center;
+}
+
+#aide ul{
+    width : 90%;
+    margin-left: 60px;
+    text-align: justify;
+    margin-right: 60px;
+    /* list-style-image: url('json_csv_1d.png'); */
+    list-style : none;
+}
+
+#aide li {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+}
+
+#aide li:before {
+    content: '\1433 ';
+    color: #ff6c57;
+}
+
+.helper{
+    color : gray;
+    margin-top:20px;
+    width : 1000px;
+}
+
+
+.helper a{
+    color: gray;
+    text-decoration: underline;
+}
+
+#helper{
+    margin : auto;
+    width :50%;
+    padding-top : 20px;
 }

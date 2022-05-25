@@ -14,7 +14,7 @@ fileInput.onchange = (e)=>{
     let file = e.target.files[0];
     // on rend le bouton "passer à l'étape suivante clickable" 
     const next_step = document.querySelector(".done");
-    if (next_step !== undefined){
+    if (next_step !== null){
         next_step.classList.remove("done");
     }
     if (file){
@@ -79,5 +79,5 @@ function validate_paire(){
     }
 }
 
-const label_valide = document.querySelector("#labelise");
-label_valide.addEventListener("click",()=>{console.log(validate_paire());});
+// const label_valide = document.querySelector("#labelise");
+// label_valide.addEventListener("click",()=>{console.log(validate_paire());});
