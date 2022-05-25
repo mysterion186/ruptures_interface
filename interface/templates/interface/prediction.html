@@ -6,7 +6,7 @@
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <section id="content">
     <p hidden id="folder_val">{{ folder_val }}</p>
-    <div class="helper">
+    <div id="helper" class="helper">
         Sur cette page vous devez téléverser les fichiers sur lesquels vous voulez prédirer les ruptures. 
         Vous avez la possibilité d'ajouter des fichiers <code>json</code> (optionnel, mais dois respecter une certaine convention de nommage).
         <a href="{% url 'interface:aide' %}" target="_blank">Cliquez ici pour avoir plus d'informations</a>
