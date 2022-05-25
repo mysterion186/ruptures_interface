@@ -36,6 +36,12 @@ def label(request):
     media_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/"
     # liste de tous les fichiers se trouvant dans le dossier média
     files = [f for f in listdir(media_path) if isfile(join(media_path, f)) and f.split(".")[-1]=="csv"]
+    for file_name in files : 
+        json_name = '.'.join(file_name.split(".")[:-1])+".json"
+        print(json_name)
+        if os.path.exists(media_path+json_name):
+            labels = tools.load_json(Path(media_path+json_name))
+            tools.standardize_json(media_path+file_name,labels)
     # affichage de la page pour mettre les labesl + noms des fichiers pour avoir l'url
     return render(request,"interface/label.html",{"files":files,"MEDIA_URL":media_path,"folder_val":folder_val})
 
@@ -47,14 +53,7 @@ def get_label(request):
         filename = data["filename"]
         labels = data["labels"]
         labels = [int(x) for x in labels] # conversion des str en int
-        with open(filename,"r") as f : 
-            a = f.readlines() 
-        if labels[-1] != len(a) or labels[-1] != len(a)-1:
-            labels.append(len(a[1:]))
-        # création d'un fichier json qui contient les indices des labels, porte le même nom que le fichier csv
-        labels.sort() # tri la liste dans la cas où les labels n'ont pas été posées dans le bon ordre
-        with open(filename.split(".")[0]+".json","w") as f : 
-            f.write(json.dumps(labels))
+        tools.standardize_json(filename,labels)
         return JsonResponse({"status": 'Success'})
 
 # fonction qui va utiliser le code alpin_predict pour déterminer les ruptures

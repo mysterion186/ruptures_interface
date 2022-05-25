@@ -28,6 +28,19 @@ def standardize_csv(file_path,filename):
             break
     data.to_csv(clean_path,index=False,sep=' ')
 
+def standardize_json(filename_csv,labels):
+    with open(filename_csv,"r") as f : 
+        a = f.readlines() 
+    if labels[-1] != len(a[1:]) and labels[-1] != len(a[1:])-1:
+        labels.append(len(a[1:])) 
+    elif labels[-1] != len(a[1:])-1 :
+        labels[-1] = len(a[1:])
+    
+    # création d'un fichier json qui contient les indices des labels, porte le même nom que le fichier csv
+    labels.sort() # tri la liste dans la cas où les labels n'ont pas été posées dans le bon ordre
+    with open(filename_csv.split(".")[0]+".json","w") as f : 
+        f.write(json.dumps(labels))
+    
 
 
 def load_json(filename: Path):
