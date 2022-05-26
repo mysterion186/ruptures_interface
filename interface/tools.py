@@ -31,16 +31,17 @@ def standardize_csv(file_path,filename):
 def standardize_json(filename_csv,labels):
     with open(filename_csv,"r") as f : 
         a = f.readlines() 
-    if labels[-1] != len(a[1:]) and labels[-1] != len(a[1:])-1:
-        labels.append(len(a[1:])) 
-    elif labels[-1] == len(a[1:])-1 :
-        labels[-1] = len(a[1:])
+    clean_label = [elt for elt in labels if elt < len(a[1:])] # on garde que les éléments qui sont inférieur à la taille max du fichiers csv
+    # cas de figure où le dernier élément ne correspod pas à la taille de la liste et la taille de la liste -1
+    if clean_label[-1] != len(a[1:]) and clean_label[-1] != len(a[1:])-1:
+        clean_label.append(len(a[1:])) 
+    elif clean_label[-1] == len(a[1:])-1 :
+        clean_label[-1] = len(a[1:])
     
     # création d'un fichier json qui contient les indices des labels, porte le même nom que le fichier csv
-    labels.sort() # tri la liste dans la cas où les labels n'ont pas été posées dans le bon ordre
-    print("from tools ",labels)
+    clean_label.sort() # tri la liste dans la cas où les labels n'ont pas été posées dans le bon ordre
     with open(filename_csv.split(".")[0]+".json","w") as f : 
-        f.write(json.dumps(labels))
+        f.write(json.dumps(clean_label))
     
 
 
