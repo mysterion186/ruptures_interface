@@ -93,6 +93,15 @@ def get_signals(request):
 def predict(request):
     folder_val = request.session.get("folder_val",CURRENT_FOLD)
     test_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/test/"
+    media_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/test/"
+    # liste de tous les fichiers se trouvant dans le dossier média
+    files = [f for f in listdir(test_path) if isfile(join(test_path, f)) and f.split(".")[-1]=="csv"]
+    for file_name in files : 
+        json_name = '.'.join(file_name.split(".")[:-1])+".true.json"
+        print(json_name)
+        if os.path.exists(media_path+json_name):
+            labels = tools.load_json(Path(media_path+json_name))
+            tools.standardize_json(media_path+file_name,labels,predict='.true')
     json_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/pen_opt.json"
     tools.alpin_predict(Path(test_path),Path(json_path))
     return JsonResponse({"status": "success"})

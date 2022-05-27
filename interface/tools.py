@@ -28,19 +28,21 @@ def standardize_csv(file_path,filename):
             break
     data.to_csv(clean_path,index=False,sep=' ')
 
-def standardize_json(filename_csv,labels):
+def standardize_json(filename_csv,labels,predict=''):
     with open(filename_csv,"r") as f : 
         a = f.readlines() 
-    clean_label = [elt for elt in labels if elt < len(a[1:])] # on garde que les éléments qui sont inférieur à la taille max du fichiers csv
+    labels.sort() # on s'assure d'avoir des fichiers bien triés
+    clean_label = [elt for elt in labels if elt <= len(a[1:])] # on garde que les éléments qui sont inférieur à la taille max du fichiers csv
     # cas de figure où le dernier élément ne correspod pas à la taille de la liste et la taille de la liste -1
     if clean_label[-1] != len(a[1:]) and clean_label[-1] != len(a[1:])-1:
         clean_label.append(len(a[1:])) 
     elif clean_label[-1] == len(a[1:])-1 :
         clean_label[-1] = len(a[1:])
-    
     # création d'un fichier json qui contient les indices des labels, porte le même nom que le fichier csv
     clean_label.sort() # tri la liste dans la cas où les labels n'ont pas été posées dans le bon ordre
-    with open(filename_csv.split(".")[0]+".json","w") as f : 
+    raw_name = filename_csv.split('.')[:-1]
+    clean_name = '.'.join(raw_name)
+    with open(clean_name+predict+".json","w") as f : 
         f.write(json.dumps(clean_label))
     
 
@@ -79,8 +81,12 @@ def is_header(filename: Path):
     regex_match = "^[a-zA-Z]"
     with open(filename, "r") as fp:
         a = fp.readline()
-    x =re.search(regex_match,a)
-    return x
+    cols = a.split(" ")
+    for col in cols : 
+        x =re.search(regex_match,col)
+        if not x : 
+            return False 
+    return True
 
 def alpin_learn(
     folder_train: Path, output_filename: Path = Path("pen_opt.json")

@@ -217,7 +217,7 @@ h1{
     display : grid;
     grid-template-columns: auto auto;
     max-height:470px;
-    overflow:scroll;
+    overflow:auto;
 }
 
 .cross{
