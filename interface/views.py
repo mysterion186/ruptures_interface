@@ -1,5 +1,8 @@
+from distutils.command.clean import clean
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
+from django.urls import reverse, reverse_lazy
+from django.http import HttpResponse, HttpResponseRedirect
 from os import listdir
 import os,shutil
 from os.path import isfile, join
@@ -11,7 +14,7 @@ import json
 from random import randint
 from pathlib import Path
 
-CURRENT_FOLD = "976"
+# CURRENT_FOLD = "976"
 # home page
 def index(request):
     # folder_val = randint(0, 1000) # dossier pour chaque utilisateur
@@ -32,14 +35,19 @@ def index(request):
 
 # page pour labelisé les signaux non labelisé
 def label(request):
-    # folder_val = request.session["folder_val"]
-    folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    # folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    if 'folder_val' not in request.session : 
+        return HttpResponseRedirect(reverse("interface:index"))
+    folder_val = request.session["folder_val"]
     media_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/"
+    # si le dossier train n'existe pas on redirige vers la page d'accueil pour uploader les fichiers
+    if not os.path.isdir(media_path):
+        return HttpResponseRedirect(reverse("interface:index"))
+    
     # liste de tous les fichiers se trouvant dans le dossier média
     files = [f for f in listdir(media_path) if isfile(join(media_path, f)) and f.split(".")[-1]=="csv"]
     for file_name in files : 
         json_name = '.'.join(file_name.split(".")[:-1])+".json"
-        print(json_name)
         if os.path.exists(media_path+json_name):
             labels = tools.load_json(Path(media_path+json_name))
             tools.standardize_json(media_path+file_name,labels)
@@ -59,13 +67,27 @@ def get_label(request):
 
 # fonction qui va utiliser le code alpin_predict pour déterminer les ruptures
 def prediction(request):
-    folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    # folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    if 'folder_val' not in request.session : 
+        return HttpResponseRedirect(reverse("interface:index"))
+    
+    folder_val = request.session["folder_val"]
+    # on s'assure que tous les fichiers csv ont un fichier json qui contient les labels , si oui on va vers la page prédiction si non on retourne vers la page label
+    media_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/"
+    files = [f for f in listdir(media_path) if isfile(join(media_path, f)) and f.split(".")[-1]=="csv"] # liste de tous les fichiers csv présent 
+    if len(files) == 0 : # cas où il n'y a pas de fichier csv 
+        return HttpResponseRedirect(reverse("interface:index")) 
+    for filename in files : 
+        raw_name = filename.split(".")[:-1]
+        clean_name = '.'.join(raw_name) 
+        if not os.path.isfile(media_path+clean_name+'.json') : # cas où me fichier json du fichier csv n'existe pas, on retourne vers la page label
+            return HttpResponseRedirect(reverse("interface:label")) 
     return render(request,"interface/prediction.html",{"folder_val":folder_val})
 
 # fonction qui va utiliser le code alpin_learn pour prédire la meilleure valeur de pénalité
 def train(request):
-    # folder_val = request.session["folder_val"]
-    folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    # folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    folder_val = request.session["folder_val"]
     json_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/pen_opt.json"
     train_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/"
     tools.alpin_learn(Path(train_path),Path(json_path))
@@ -79,7 +101,8 @@ def train(request):
 
 # vue pour télécharger les signaux sur lesquels on veut prédire les ruptures
 def get_signals(request):
-    folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    # folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    folder_val = request.session["folder_val"]
     # si méthode == post => on a uploadé un fichier 
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile'] # lecture du fichier depuis la requête
@@ -93,14 +116,14 @@ def get_signals(request):
 
 # "vue" pour faire appel à alpin_predict 
 def predict(request):
-    folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    # folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    folder_val = request.session["folder_val"]
     test_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/test/"
     media_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/test/"
     # liste de tous les fichiers se trouvant dans le dossier média
     files = [f for f in listdir(test_path) if isfile(join(test_path, f)) and f.split(".")[-1]=="csv"]
     for file_name in files : 
         json_name = '.'.join(file_name.split(".")[:-1])+".true.json"
-        print(json_name)
         if os.path.exists(media_path+json_name):
             labels = tools.load_json(Path(media_path+json_name))
             tools.standardize_json(media_path+file_name,labels,predict='.true')
@@ -126,7 +149,8 @@ def coord(request,filename,folder_val,folder_name):
 
 # "vue" pour supprimer un dossier dans le cas où l'utilisateur a fait une erreur
 def delete_folder(request):
-    folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    # folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    folder_val = request.session["folder_val"]
     folder_path = str(MEDIA_ROOT)+"/"+str(folder_val)
     shutil.rmtree(folder_path)
     return JsonResponse({"status":"success"})
