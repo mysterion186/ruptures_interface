@@ -35,7 +35,7 @@ const prediction_button = document.getElementById("prediction");
 prediction_button.addEventListener("click", () => {
     const file_predict = document.querySelectorAll(".filename");
     file_predict.forEach(elt => elt.addEventListener('click', ()=>{reset_page();reset_choosed_file();choosed_file(elt.id);makeplot(baseUrl+elt.id);}));
-    axios.get("prediction/predict").then((response)=>{console.log(response);});
+    axios.get("prediction/predict").then((response)=>{console.log(response);file_predict[0].click()}); // on clique sur le premier élément pour indiquer que la prédiction est terminée
 });
 
 // fonction pour indiquer qu'on vient de cliquer sur un fichier
@@ -61,7 +61,7 @@ function makePlotly( traces,line_bottom,line_top ){
     const display = document.getElementById("left");
     const select_file = document.querySelector(".choosed"); // récuperration du fichiers choisi
     var layout = { 
-        title : "test",
+        title : select_file.innerHTML,
         hovermode:'closest',
         shapes: []};
     // code plotly pour indiquer quel array correspond à quoi

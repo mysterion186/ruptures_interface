@@ -9,6 +9,8 @@ var filename = document.querySelectorAll(".filename");
 // on rend chaque "fichier" clickable, lorsqu'on clique cela affiche le graphique, la fonction qui fait ça prend en paramètre l'url du fichier
 filename.forEach(elt => elt.addEventListener('click', ()=>{reset_page();choosed_file(elt.id);makeplot(baseUrl+elt.id);}));
 
+// on affiche par défault la première valeur du graphique
+filename[0].click()
 // fonction pour télécharger le fichier csv + créer le graphique
 function makeplot(filename) {
     d3.dsv(' ')(filename, function(data){ processData(data,makePlotly) } );
@@ -18,12 +20,12 @@ function makeplot(filename) {
 function makePlotly( traces,line_bottom,line_top ){
     var plotDiv = document.getElementById("myDiv"); // position à laquelle va s'afficher le graphe dans la page HTML
     // objet layout qui contient le titre et par la suite les barres verticales qui représentent les labels
+    const selected_file = document.querySelector(".choosed");
     var layout = { 
-        title : "test",
+        title : selected_file.innerHTML,
         hovermode:'closest',
         shapes: []};
     const folder_val = document.getElementById("folder_val"); // on choppe le dossier de la session
-    const selected_file = document.querySelector(".choosed");
     axios.get(`prediction/coord/${folder_val.innerHTML}/train/${selected_file.innerHTML}`).then((response) => {
         if (response["data"]["status"] === "success") {
             const label_array = response["data"]["array"];
