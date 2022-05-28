@@ -22,10 +22,11 @@ def index(request):
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile'] # lecture du fichier depuis la requête
         fs = FileSystemStorage()
-        filename = fs.save(str(folder_val)+"/train/"+myfile.name, myfile) # on enregistre le fichier
-        if myfile.name.split(".")[-1]=="csv": # on standardise que les fichiers csv
-            tools.standardize_csv(str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/",myfile.name) # on le standardise 
-        return render(request, 'interface/index.html') # on retourne la page d'accueil
+        if myfile.name.split('.')[-1]=='csv' or myfile.name.split('.')[-1]=='json': # on accepte que les fichiers csv ou json     
+            filename = fs.save(str(folder_val)+"/train/"+myfile.name, myfile) # on enregistre le fichier
+            if myfile.name.split(".")[-1]=="csv": # on standardise que les fichiers csv
+                tools.standardize_csv(str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/",myfile.name) # on le standardise 
+            return render(request, 'interface/index.html') # on retourne la page d'accueil
     return render(request,"interface/index.html")
 
 
