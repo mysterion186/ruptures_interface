@@ -1,0 +1,69 @@
+{% extends 'interface/base.html' %} 
+{% load static %}
+{% block content %}         
+<section id="aide">
+    <div class="text">
+        <h1 id="main_title" class="title">Bienvenue sur la page d'aide de ruptures_interface</h1>
+        <p>
+            Le but de cette page est de vous aider à prendre en main l'outil. Pour cela, on va passer en revue les différentes pages
+            de l'outil et comment les utiliser.
+        </p>
+        <h2 class="second_header title">Accueil</h2>
+        <p>
+            Sur cette page, vous avez la possibilité de téléverser vos signaux sous la forme de fichier <code>csv</code>. Ci-dessous,
+            se trouvent quelques exemple de fichiers acceptés par cet outil. Il faut dans le cas de signaux à plusieurs dimensions,<b> séparer les 
+            colonnes à l'aide d'un espace</b>.  
+        </p>
+        <section id="image">
+            <div class="img">
+                <img src="{% static 'interface/csv_1d_header.png' %}" alt="csv à 1 dimension avec un header">
+                <p class="subtitle">figure 1 : Voici l'exemple d'un fichier <code>csv</code> du nom <code>1.csv</code> à une dimension qui a un header ('Valeur0')</p>
+            </div>
+            <div class="image">
+                <img src="{% static 'interface/csv_1d_no_header.png' %}" alt="csv à 1 dimension sans header">
+                <p class="subtitle">figure 2 : Voici l'exemple d'un fichier <code>csv</code> à une dimension sans header </p>
+            </div>
+            <div class="image">
+                <img src="{% static 'interface/csv_2d_header.png' %}" alt="csv à plusieurs dimension avec header">
+                <p class="subtitle">figure 3 : Voici l'exemple d'un fichier <code>csv</code> à plusieurs dimensions avec header </p>
+            </div>
+        </section>
+        <p>
+            Outre les fichier <code>csv</code>, vous pouvez téléverser des fichiers <code>json</code> qui contiennent les indices des endroits où 
+            il y a des ruptures. 
+            <section id="image">
+                <div class="img">
+                    <img src="{% static 'interface/json_csv_1d.png' %}" alt="label pour le fichier 1.csv de la figure 1">
+                    <p class="subtitle">figure 4 : Capture d'écran du fichier <code>1.json</code> qui contient les indices des ruptures du fichier de la figure 1</p>
+                </div>
+            </section>
+        <p>
+            Le téléversement des fichiers <code>json</code> est optionnel, mais si vous le faites, il faut respecter une convention de nommage.
+            Le fichier <code>json</code> contenant les labels du signal <code>x.csv</code> doit s'appeler <code>x.json</code>.
+        </p>
+        <h2 class="second_header title">Label</h2>
+        <p>
+            Sur la page <b>Label</b>, vous avez la possibilité de labelliser vos signaux pour y indiquer les endroits où se produisent les ruptures sur le signal.
+            Si à l'étape précédente, vous avez téléversé des fichiers <code>json</code> (en respectant la convention de nommage), les labels seront automatiquement tracés pour vous (vous aurez quand même la possibilité de les modifier).
+            Voici la liste des actions qui peuvent être réalisées sur cette page : 
+            <ul>
+                <li> poser un label : pour cela, il faut cliquer sur le graphique à l'endroit où vous voulez poser un label.</li>
+                <li> déplacer un label : une fois posé, vous pouvez déplacer un label en le sélectionnant (drag and drop).</li>
+                <li> supprimer un label : lorsque vous voulez supprimer un label, vous devez passer la souris sur la zone où se trouve la liste des labels posés (sur la droite) le label correspondant sera alors en bleu pour vous aider à le remarquer. Une croix rouge apparaîtra pour supprimer ce label.</li>
+                <li> Valider : À chaque fois que vous avez fini de poser les labels, vous devez valider ces derniers, une fois que vous avez labellisé tous les signaux vous devez cliquer le bouton "Entraîner le modèle".</li>
+            </ul>
+        </p>
+        <h2 class="second_header title">Prédiction</h2>
+        <p>
+            Sur la page <b>Prédiction</b>, vous avez maintenant la possibilité de prédire les ruptures sur vos signaux. En effet, le but de l'étape précédente était d'entraîner le modèle à détecter les ruptures sur des signaux "spécifiques".
+            Pour obtenir vos premières prédictions, vous devez téléverser dans l'espace prévu à cet effet vos signaux. 
+            Une fois tous vos signaux téléversés, vous pouvez appuyer sur le bouton prédire pour voir les résultats. 
+            Vous tomberez sur une page similaire à la page <b>Label</b>, où vous pourrez cliquer sur les fichiers et afficher les points de ruptures prédits par le module.
+            <p>
+                C'est optionnel, mais vous avez la possibilité de téléverser des fichiers <code>json</code> pour comparer la prédiction du module et des labels détecté 'à la main'.
+                Pour cela, comme sur la page d'accueil, il y a une convention de nommage à respecter. Le fichier <code>json</code> contenant les labels du signal <code>x.csv</code> doit s'appeler <code>x.true.json</code>.
+            </p>
+        </p>
+    </div>
+</section>
+{% endblock %}

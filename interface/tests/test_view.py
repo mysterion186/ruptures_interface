@@ -4,7 +4,7 @@ import os
 import shutil
 from interface import tools
 from pathlib import Path
-
+import json
 
 class TestView(TestCase):
 
@@ -13,8 +13,8 @@ class TestView(TestCase):
         s = self.client.session
         s.update({"folder_val":str(30)})
         s.save()
-        folder_val = s.get('folder_val')
-        self.file_path = str(MEDIA_ROOT)+"/"+folder_val
+        self.folder_val = s.get('folder_val')
+        self.file_path = str(MEDIA_ROOT)+"/"+self.folder_val
         return super().setUp()
     
     def tearDown(self):
@@ -50,6 +50,7 @@ class TestView(TestCase):
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_header_1D.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_header_2D.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_no_header_2D.csv",'')
+        self.send_data(str(BASE_DIR)+"/interface/tests/files/aide.html",'') # fichier qui ne devrait pas apparaître dans le dossier car ne respecte pas l'ext csv ou json
         
         self.assertTrue(os.path.exists(self.file_path+'/train/csv_no_header_1D.csv'))
         self.assertTrue(tools.is_header(Path(self.file_path+'/train/csv_no_header_1D.csv')))
@@ -62,6 +63,7 @@ class TestView(TestCase):
 
         self.assertTrue(os.path.exists(self.file_path+'/train/csv_no_header_2D.csv'))
         self.assertTrue(tools.is_header(Path(self.file_path+'/train/csv_no_header_2D.csv')))
+        self.assertFalse(os.path.exists(self.file_path+'/train/aide.html'))
 
 
     # test pour voir si les fichiers json sont bien "standardisé" 
@@ -125,7 +127,8 @@ class TestView(TestCase):
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/2.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/2.json",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/3.csv",'')
-        self.send_data(str(BASE_DIR)+"/interface/tests/files/train/3.json",'')
+        post_dict = {"filename":f"media/{self.folder_val}/train/3.csv","labels":["102", "209", "312", "434", "559", "673", "787", "893", "1000"]}
+        self.client.post('/add',json.dumps(post_dict),content_type="application/json")
 
         # chemin d'accès vers le dossier train + fichier où écrire le json
         folder_path = self.file_path+"/train/"
@@ -148,7 +151,9 @@ class TestView(TestCase):
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train2D/3.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train2D/3.json",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train2D/4.csv",'')
-        self.send_data(str(BASE_DIR)+"/interface/tests/files/train2D/4.json",'')
+        # self.send_data(str(BASE_DIR)+"/interface/tests/files/train2D/4.json",'')
+        post_dict = {"filename":f"media/{self.folder_val}/train/4.csv","labels":["98", "200"]}
+        self.client.post('/add',json.dumps(post_dict),content_type="application/json")
 
          # chemin d'accès vers le dossier train + fichier où écrire le json
         folder_path = self.file_path+"/train/"
@@ -160,7 +165,7 @@ class TestView(TestCase):
         pen_opt = pen_opt_dict["pen_opt"]
         self.assertTrue(pen_opt==2.01)
     
-    def test_train_pen_2D(self):
+    def test_train_pen_6(self):
         """
             Test pour s'assure que la valeur de pénalité déterminée correspond à ce que l'on veur pour les signaux à 6 dimensions
         """
@@ -200,6 +205,11 @@ class TestView(TestCase):
         self.send_data(str(BASE_DIR)+"/interface/tests/files/label/csv_no_header_1D.json",'/prediction/signal')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/label/csv_header_1D.json",'/prediction/signal')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/label/csv_header_2D.json",'/prediction/signal')
+        
+        # envoie d'un fichier qui n'est pas un csv ni un json pour être sûr qu'il ne sera pas téléchargé
+        self.send_data(str(BASE_DIR)+"/interface/tests/files/aide.html",'') # fichier qui ne devrait pas apparaître dans le dossier car ne respecte pas l'ext csv ou json
+        # vérif pour être sûr que le fichier n'existe pas
+        self.assertFalse(os.path.exists(self.file_path+'/train/aide.html'))
         
         # liste contenant les valeurs qu'on est censé obtenir dans les fichiers json 
         label_json_1 = [120, 248, 375, 500]
