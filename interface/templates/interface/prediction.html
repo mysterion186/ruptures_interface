@@ -8,7 +8,9 @@
     <p hidden id="folder_val">{{ folder_val }}</p>
     <div id="helper" class="helper">
         Sur cette page vous devez téléverser les fichiers sur lesquels vous voulez prédirer les ruptures. 
-        Vous avez la possibilité d'ajouter des fichiers <code>json</code> (optionnel, mais doit respecter une certaine convention de nommage).
+        Sur cette page, vous devez mettre les signaux sur lesquels vous vouleé prédirer les ruptures sous la forme de fichier <code>csv</code>. <br>
+        Optionnel, vous avez la possibilité de téléverser des fichiers <code>json</code> qui contiennent les labels d'un signal (pour comparer avec la prédiction de ruptures).
+        Le fichier <code>json</code> contenant les labels du signal <code>x.csv</code> doit s'appeler <code>x.true.json</code>.
         <a href="{% url 'interface:aide' %}" target="_blank">Cliquez ici pour avoir plus d'informations</a>
     </div>
     <h1 class="title">Pénalité</h1>

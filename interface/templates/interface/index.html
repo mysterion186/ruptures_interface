@@ -5,7 +5,9 @@
 
 <section id = "file_input">
     <div class="helper">
-        Sur cette page, vous devez mettre des signaux (fichier <code>csv</code>) et des fichiers <code>json</code> (optionnel, mais dois respecter une certaine convention de nommage) pour pouvoir entraîner le modèle.
+        Sur cette page, vous devez mettre vos signaux sous la forme de fichier <code>csv</code>. <br>
+        Optionnel, vous avez la possibilité de téléverser des fichiers <code>json</code> qui contiennent les labels d'un signal.
+        Le fichier <code>json</code> contenant les labels du signal <code>x.csv</code> doit s'appeler <code>x.json</code>.
         <a href="{% url 'interface:aide' %}" target="_blank">Cliquez ici pour avoir plus d'informations</a>
     </div>
     <div class="wrapper">

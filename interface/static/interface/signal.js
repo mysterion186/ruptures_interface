@@ -9,8 +9,9 @@ var filename = document.querySelectorAll(".filename");
 // on rend chaque "fichier" clickable, lorsqu'on clique cela affiche le graphique, la fonction qui fait ça prend en paramètre l'url du fichier
 filename.forEach(elt => elt.addEventListener('click', ()=>{reset_page();choosed_file(elt.id);makeplot(baseUrl+elt.id);}));
 
+var filenum = 0;
 // on affiche par défault la première valeur du graphique
-filename[0].click()
+filename[filenum].click()
 // fonction pour télécharger le fichier csv + créer le graphique
 function makeplot(filename) {
     d3.dsv(' ')(filename, function(data){ processData(data,makePlotly) } );
@@ -194,6 +195,8 @@ const validation_button = document.getElementById("validation");
 validation_button.addEventListener("click",()=>{
     if (validation_button.innerHTML === "Valider les labels"){
         validation();
+        filenum++;
+        filename[filenum].click();
     }
     else {
         window.location.href=baseUrl+"prediction";
