@@ -48,7 +48,7 @@ function uploadFile(name,form,post_url='',accueil=true){
                 var fileArea = document.getElementById("label_predict");
                 if (loaded === progressEvent.total){
                     const detect_ext = name.split(".");
-                    console.log(detect_ext[detect_ext.length-1]);
+                    // console.log(detect_ext[detect_ext.length-1]);
                     if (detect_ext[detect_ext.length-1]==="csv"){
                         var predict_name = `<h1 class="filename" id="media/${folder_val.innerHTML}/test/${name}">${name}</a></h1>`;
                         fileArea.innerHTML +=predict_name;

@@ -2,6 +2,7 @@ import {uploadFile,init_form,processData } from './commun.js'
 var getUrl = window.location;
 var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" ;
 
+console.log("Ed 2");
 const folder_val = document.getElementById("folder_val"); // on choppe le dossier de la session
 // console.log("appelle axios ",baseUrl+'train')
 axios(baseUrl+'train').then((response) => {
@@ -21,21 +22,25 @@ axios(baseUrl+'train').then((response) => {
 // initialisation des events listener du formulaire 
 const temp = init_form();
 const form = temp[0], fileInput = temp[1];
+const prediction_button = document.getElementById("prediction");
 
 fileInput.onchange = (e)=>{
     let file = e.target.files[0];
     if (file){
         let fileName = file.name;
         uploadFile(fileName,form,'prediction/signal',false);
+        // on rend le bouton prédiction clickable de nouveau (parce qu'on vient d'uploader un nouveau fichier)
+        prediction_button.classList.remove("done");
     }
 };
 
 // fait appel au back pour lancer le code alpin_predict 
-const prediction_button = document.getElementById("prediction");
 prediction_button.addEventListener("click", () => {
     const file_predict = document.querySelectorAll(".filename");
     file_predict.forEach(elt => elt.addEventListener('click', ()=>{reset_page();reset_choosed_file();choosed_file(elt.id);makeplot(baseUrl+elt.id);}));
     axios.get("prediction/predict").then((response)=>{console.log(response);file_predict[0].click()}); // on clique sur le premier élément pour indiquer que la prédiction est terminée
+    // on rend le bounton prédiction non clickable
+    prediction_button.classList.add("done");
 });
 
 // fonction pour indiquer qu'on vient de cliquer sur un fichier
@@ -67,6 +72,7 @@ function makePlotly( traces,line_bottom,line_top ){
     // code plotly pour indiquer quel array correspond à quoi
     axios.get(`prediction/coord/${folder_val.innerHTML}/test/${select_file.innerHTML}`).then((response)=>{
         const predicted_value = response["data"]["array"];
+        console.log("predit ",predicted_value);
         for (let i=0; i< predicted_value.length;i++){
             layout["shapes"].push({
                 'type': 'line',
@@ -87,6 +93,7 @@ function makePlotly( traces,line_bottom,line_top ){
         const display_r = document.getElementById("right");
         if (label_value !== undefined) {
             const lenght_layout = layout["shapes"].length;
+            console.log("label ",label_value)
             for (let i=0; i< label_value.length;i++){
                 layout["shapes"].push({
                     'type': 'line',
