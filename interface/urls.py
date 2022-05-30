@@ -17,4 +17,5 @@ urlpatterns = [
     path("prediction/signal",views.get_signals,name="upload_signal"), # url qui va recevoir les fichiers uploadé 
     path("prediction/predict",views.predict, name="predict"), # url pour faire appel à alpin_predict
     path("prediction/coord/<int:folder_val>/<str:folder_name>/<str:filename>",views.coord, name="coord"), # url pour chopper les indices des ruptures 
+    path("download",views.download, name="download"), # url pour pouvoir télécharger les dossiers sur lesquels on a travaillé
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT) # url pour accèder aux médias

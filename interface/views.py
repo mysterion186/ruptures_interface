@@ -160,3 +160,19 @@ def delete_folder(request):
 
 def aide(request):
     return render(request,'interface/aide.html')
+
+
+# fonction pour télécger les signaux prédits 
+def download(request):
+    # si on arrive jusqu'à la possibilité de télécharger un dossier c'est que tous les ruptures ont été prédites 
+    folder_val = request.session["folder_val"]
+    folder_path = str(MEDIA_ROOT)+"/"+str(folder_val)
+    output_path = folder_path+"/"+str(folder_val)
+    # conversion du dossier en un zip 
+    shutil.make_archive(output_path, "zip",folder_path) # où on sauvegarde, le format, le dossier qu'on veut compresser
+    with open(output_path+".zip","rb") as fh :
+        response = HttpResponse(fh.read(),content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename='+folder_val+'.zip'
+        return response
+
+    
