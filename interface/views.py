@@ -74,6 +74,9 @@ def prediction(request):
     folder_val = request.session["folder_val"]
     # on s'assure que tous les fichiers csv ont un fichier json qui contient les labels , si oui on va vers la page prédiction si non on retourne vers la page label
     media_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/"
+    # si le dossier train n'existe pas on redirige vers la page d'accueil pour uploader les fichiers
+    if not os.path.isdir(media_path):
+        return HttpResponseRedirect(reverse("interface:index"))
     files = [f for f in listdir(media_path) if isfile(join(media_path, f)) and f.split(".")[-1]=="csv"] # liste de tous les fichiers csv présent 
     if len(files) == 0 : # cas où il n'y a pas de fichier csv 
         return HttpResponseRedirect(reverse("interface:index")) 

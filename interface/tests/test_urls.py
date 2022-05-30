@@ -91,6 +91,18 @@ class TestUrls(TestCase):
         response = self.client.get(url)
         self.assertNotEqual(response.status_code, 200) # code différent de 200 parce qu'il y a eu une redirection
         self.assertRedirects(response,"/") # indique qu'on est bien sur la page d'accueil
+    
+    def test_redirect_from_prediction_to_index_empty_folder(self):
+        """
+            Test pour s'assurer qu'on est bien redirigé vers la page index s'il "folder_val" dans la session mais le dossier train n'existe pas
+        """
+        s = self.client.session
+        s.update({"folder_val":str(30)})
+        s.save()
+        url = reverse("interface:prediction")
+        response = self.client.get(url)
+        self.assertNotEqual(response.status_code, 200) # code différent de 200 parce qu'il y a eu une redirection
+        self.assertRedirects(response,"/") # indique qu'on est bien sur la page d'accueil
 
     def test_redirect_from_prediction_to_label_only_csv(self):
         """
@@ -142,7 +154,6 @@ class TestUrls(TestCase):
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/2.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/2.json",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/3.csv",'')
-        print("depuis test fichiers envoyé ")
         # on a envoyé les fichiers (le dossier train existe) + folder_val existe. si on va sur prediction on doit retourner sur label
         response = self.client.get(url)
         self.assertNotEqual(response.status_code, 200) # code différent de 200 parce qu'il y a eu une redirection
