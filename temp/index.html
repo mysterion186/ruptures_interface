@@ -5,9 +5,31 @@
     </head>
     
     <body>
-        <h1>Hello</h1>
-        <div id="myDiv" style="width: 1000px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
-        <script src="origine.js"></script>
+
+        <section class="label_wrapper">
+            <div id="helper" class="helper">
+                Sur cette page vous devez indiquer en cliquant sur le graphique les endroits où ont lieu des ruptures,
+                 il y a plusieurs fonctionnalité comme déplacer un label ou bien le supprimer.
+                 <a href="{% url 'interface:aide' %}" target="_blank">Cliquez ici pour avoir plus d'informations.</a>
+                 Une fois que vous avez validé tous les labels, vous pouvez entraîner le modèle.
+            </div>
+            <section class="label">
+                <p hidden id="folder_val">{{ folder_val }}</p>
+                <div id="myDiv" style="width: 900px; height: 500px;"><!-- Plotly chart will be drawn inside this DIV --></div> 
+                <div id="xcoords">
+                    <div id="left"></div>
+                    <div id="right"></div>
+                </div>
+            </section>
+        </section>
+        <section class="files">
+            <div class="file-container">
+                {% for myfile in files %}
+                    <h1 class="filename" id="media/{{ folder_val }}/train/{{ myfile }}">{{ myfile }}</a></h1>
+                {% endfor %}
+            </div>
+            <div class="validation" id="validation">Valider les labels</div>
+        </section>
         <script src="script.js"></script>
 
   </body>
