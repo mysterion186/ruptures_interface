@@ -43,7 +43,7 @@ function makePlotly(traces,line_bottom,line_top ){
         title : "test",
         // hovermode:'closest',
         shapes: [],
-        // dragmode:"select",
+        dragmode:"select",
     
     };
     
@@ -60,64 +60,106 @@ function makePlotly(traces,line_bottom,line_top ){
         y: [16, 5, 11, 9],
         name:"t2"
       };
-      var data = [trace1, trace2];
-      console.log(data);
-      Plotly.newPlot('myDiv', data,layout,{editable:true});
+    //   var data = [trace1, trace2];
+    //   console.log(data);
+    //   Plotly.newPlot('myDiv', data,layout,{editable:true});
       
-      var graphDiv = document.getElementById("myDiv");
-      console.log("test");
-      graphDiv.on('plotly_selected', function(eventData) {
-        var xRange = eventData.range.x;
-        var yRange = eventData.range.y;
-        console.log("x0 = ",xRange[0]," x1 = ",xRange[1]," y0 = ",yRange[0]," y1 = ",yRange[1]);
-      });
-
-    // Plotly.newPlot('myDiv', traces,layout,{editable: true,});
-    
-
-    
-
-    // // code pour créer une zone sur le graphique
-    // plotDiv.on('plotly_selected', function(eventData) {
+    //   var graphDiv = document.getElementById("myDiv");
+    //   console.log("test");
+    //   graphDiv.on('plotly_selected', function(eventData) {
     //     var xRange = eventData.range.x;
     //     var yRange = eventData.range.y;
     //     console.log("x0 = ",xRange[0]," x1 = ",xRange[1]," y0 = ",yRange[0]," y1 = ",yRange[1]);
-    //     // trait vertical en x0
-    //     layout["shapes"].push({
-    //         'x0':xRange[0],
-    //         'y0':yRange[0],
-    //         'x1':xRange[0],
-    //         'y1':yRange[1],
-    //         'markers': {
-    //             'color': 'red',
-    //              dash: 'dot',
-    //             'width':3,
-    //         }
-    //     })
-        
-    //     Plotly.redraw('myDiv');
-    // });
+    //   });
 
-    plotDiv.on('plotly_click', function(data){
-        var pts = '';
-        for(var i=0; i < data.points.length; i++){
-            pts = 'x = '+data.points[i].x +'\ny = '+
-            data.points[i].y.toPrecision(4) + '\n\n';
-            console.log("Vous voulez ajouter une rupture au point : ",data.points[i].x );
-            layout["shapes"].push({
-                'x0':data.points[i].x,
-                'y0':line_bottom,
-                'x1':data.points[i].x,
-                'y1':line_top,
-                'markers': {
-                    'color': 'black',
-                     dash: 'dot',
-                    'width':3,
-                }
-            })
-            Plotly.redraw('myDiv');
+    Plotly.newPlot('myDiv', traces,layout,{editable: true,});
+    
+
+    
+
+    // draw vertical line
+plotDiv.on('plotly_click', function(data){
+    var pts = '';
+    for(var i=0; i < data.points.length; i++){
+        pts = 'x = '+data.points[i].x +'\ny = '+
+        data.points[i].y.toPrecision(4) + '\n\n';
+        console.log("Vous voulez ajouter une rupture au point : ",data.points[i].x );
+        layout["shapes"].push({
+            'type': 'line',
+            'x0':data.points[i].x,
+            'y0':line_bottom,
+            'x1':data.points[i].x,
+            'y1':line_top,
+            'line': {
+                'color': 'black',
+                 dash: 'dot',
+                'width':3,
+            }
+        })
+        Plotly.redraw('myDiv');
+    }
+});
+
+// create box 
+plotDiv.on('plotly_selected', (eventData) => {
+    if (!eventData) return;
+    var xRange = eventData.range.x;
+    var yRange = eventData.range.y;
+    console.log("x0 = ",xRange[0]," x1 = ",xRange[1]," y0 = ",yRange[0]," y1 = ",yRange[1]);
+    // trait vertical en x0
+    layout["shapes"].push({
+        'type': 'line',
+        'x0':xRange[0],
+        'y0':yRange[0],
+        'x1':xRange[0],
+        'y1':yRange[1],
+        'line': {
+            'color': 'red',
+             dash: 'dot',
+            'width':3,
         }
-    });
+    })
+    //vertical at x1
+    layout["shapes"].push({
+        'type': 'line',
+        'x0':xRange[1],
+        'y0':yRange[0],
+        'x1':xRange[1],
+        'y1':yRange[1],
+        'line': {
+            'color': 'red',
+             dash: 'dot',
+            'width':3,
+        }
+    })
+    //horizontal at y1
+    layout["shapes"].push({
+        'type': 'line',
+        'x0':xRange[0],
+        'y0':yRange[1],
+        'x1':xRange[1],
+        'y1':yRange[1],
+        'line': {
+            'color': 'red',
+             dash: 'dot',
+            'width':3,
+        }
+    })
+    // horizontal at y0
+    layout["shapes"].push({
+        'type': 'line',
+        'x0':xRange[0],
+        'y0':yRange[0],
+        'x1':xRange[1],
+        'y1':yRange[0],
+        'line': {
+            'color': 'red',
+             dash: 'dot',
+            'width':3,
+        }
+    })
+    Plotly.redraw('myDiv');
+});
 };
 
 makeplot("976/train/2.csv");
