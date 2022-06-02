@@ -139,9 +139,13 @@ function delete_label(layout,elt_id){
         }
     }
     var x_coord = document.getElementById(elt_id);
-    x_coord.parentNode.removeChild(x_coord);
-    var coord_cross = document.getElementById("cross_"+elt_id);
-    coord_cross.parentNode.removeChild(coord_cross);
+    if (x_coord !== null){
+        // left.removeChild(x_coord);
+        x_coord.remove();
+        var coord_cross = document.getElementById("cross_"+elt_id);
+        // right.removeChild(coord_cross);
+        coord_cross.remove();
+    }
 }
 
 // fonction pour supprimer l'affichage des croix
