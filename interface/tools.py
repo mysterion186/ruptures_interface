@@ -6,6 +6,8 @@ import numpy as np
 import ruptures as rpt
 from scipy.optimize import minimize
 
+LIST_OF_MODELS = ["l1", "l2", "linear", "rbf", "normal", "mahalanobis", "rank", "cosine"]
+
 # fonction pour "arranger" les fichiers csv 
 # par ex à l'heure actuelle faut que la première colonne (l'axe y) s'appelle 'Valeur'
 def standardize_csv(file_path,filename):
@@ -89,7 +91,7 @@ def is_header(filename: Path):
     return True
 
 def alpin_learn(
-    folder_train: Path, output_filename: Path = Path("pen_opt.json")
+    folder_train: Path, output_filename: Path = Path("pen_opt.json"), model="l2"
 ) -> None:
     """Learn optimal penalty and write the result on disk."""
 
@@ -102,8 +104,8 @@ def alpin_learn(
         grad_val = 0
         for s, b in zip(X_train, y_train):
             log_T = np.log(s.shape[0])
-            # change the following line if you need another cost function
-            algo = rpt.KernelCPD(kernel="linear").fit(s)
+            algo = get_algo(model=model)
+            algo.fit(s)
             bkps_predited = algo.predict(pen=pen * log_T)
             loss_val += algo.cost.sum_of_costs(b) - algo.cost.sum_of_costs(
                 bkps_predited
@@ -123,6 +125,7 @@ def alpin_predict(
     folder_test,
     pen_opt_filename: Path = Path("pen_opt.json"),
     output_folder: Path = None,
+    model = "l2"
 ) -> None:
     err_msg = f"Test folder not found: {folder_test}"
     assert folder_test.exists() and folder_test.is_dir(), err_msg
@@ -141,7 +144,8 @@ def alpin_predict(
             else : 
                 signal = np.loadtxt(fname=filename.with_suffix(".csv"))
             log_T = np.log(signal.shape[0])
-            bkps_predited = rpt.KernelCPD(kernel="linear").fit_predict(
+            algo = get_algo(model=model)
+            bkps_predited = algo.fit_predict(
                 signal=signal, pen=pen_opt * log_T
             )
             # convert to np.int32 to int for Json serialization
@@ -150,3 +154,30 @@ def alpin_predict(
                 obj=bkps_predited,
                 filename=(output_folder / filename.stem).with_suffix(".pred.json"),
             )  
+
+
+def get_algo(model: str="l2")->rpt.base.BaseEstimator:
+    """Return a change-point detection algorithm.
+
+    Args:
+        model (str, optional): the name of the cost function. Defaults to "l2".
+
+    Returns:
+        rpt.base.BaseEstimator: change detection algorithm
+    """
+    # Check if model is implemented
+    model = model.strip("").lower()
+    err_msg = f"Choose a model in {LIST_OF_MODELS}, not {model}."
+    assert model in LIST_OF_MODELS, err_msg
+    # choosing the cost function
+    if model=="l2":
+        return rpt.KernelCPD(kernel="linear")
+    elif model=="rbf":
+        return rpt.KernelCPD(kernel="rbf")
+    elif model=="cosine":
+        return rpt.KernelCPD(kernel="cosine")
+    else:
+        return rpt.Pelt(model=model)
+
+
+
