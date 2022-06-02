@@ -176,3 +176,20 @@ def download(request):
         return response
 
     
+def js_test(request):
+    # folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    folder_val = str(976)
+    media_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/"
+    # si le dossier train n'existe pas on redirige vers la page d'accueil pour uploader les fichiers
+    if not os.path.isdir(media_path):
+        return HttpResponseRedirect(reverse("interface:index"))
+    
+    # liste de tous les fichiers se trouvant dans le dossier média
+    files = [f for f in listdir(media_path) if isfile(join(media_path, f)) and f.split(".")[-1]=="csv"]
+    for file_name in files : 
+        json_name = '.'.join(file_name.split(".")[:-1])+".json"
+        if os.path.exists(media_path+json_name):
+            labels = tools.load_json(Path(media_path+json_name))
+            tools.standardize_json(media_path+file_name,labels)
+    # affichage de la page pour mettre les labesl + noms des fichiers pour avoir l'url
+    return render(request,"interface/test.html",{"files":files,"MEDIA_URL":media_path,"folder_val":folder_val})
