@@ -29,3 +29,5 @@ services:
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
     ports:
       - "5900:5900"
+    volumes:
+      - ./interface/tests/files:/src

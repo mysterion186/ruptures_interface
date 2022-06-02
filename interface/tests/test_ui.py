@@ -1,8 +1,11 @@
 from django.test import TestCase, tag
+from ruptures_interface import settings
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup # pour scrapper la page et s'assurer que tous marche bien au niveau de l'affichage
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-
+import time, os
 class TestUi(TestCase):
 
     def setUp(self):
@@ -10,19 +13,52 @@ class TestUi(TestCase):
             command_executor='http://selenium_hub:4444/wd/hub',
             desired_capabilities=DesiredCapabilities.CHROME
         )
+
+        # on clique sur la zone pour uploader un fichier
+        self.chrome.get('http://web:8000')
+        time.sleep(5)
+        try : 
+            file_input = self.chrome.find_element(By.CLASS_NAME,"file-input")
+            file_input.send_keys("/src/train/1.csv")
+            file_input.send_keys("/src/train/2.csv")
+            file_input.send_keys("/src/train/3.csv")
+            file_input.send_keys("/src/train/1.json")
+            file_input.send_keys("/src/train/2.json")
+            file_input.send_keys("/src/train/3.json")
+            time.sleep(5)
+            # détermine la valeur de la session (pour la supprimer à la fin de chaque test)
+            all_subdirs =os.listdir(settings.MEDIA_ROOT)
+            print(all_subdirs)
+            self.folder_val = max(all_subdirs, key=os.path.getmtime) 
+            print(self.folder_val)
+        except Exception as e : 
+            print(e)
+            self.tearDown()
+        
+
+    def tearDown(self) -> None:
+        self.chrome.quit()
+        return super().tearDown()
     
-    def test_init(self):
+    def checklist(self, list1, list2):
+        """
+            fonction qui renvoie une erreur si les 2 listes sont différentes
+        """
+        for k in range(len(list1)):
+            self.assertTrue(list1[k]==list2[k])
+
+    def test_check_uploaded_file(self):
         """
             Test pour aller sur la page d'accueil
-            On envoie des fichiers au backend (en cliquant) et on s'assure que chaque fichier se trouve bien dans la liste des fichiers uploadé
+            Dans le setUp, on va déjà envoyer des fichiers, on s'assure qu'ils se trouvent dans la zone adéquate
         """
-        self.chrome.get('http://web:8000')
-        js = """
-            var identifier = document.querySelector(".log");
-            identifier.innerHTML = "modif js !";
-        """
-        self.chrome.execute_script(js)
-        self.assertIn(self.chrome.title, 'Ruptures Interface')
+        uploaded_file = ['3.json', '2.json', '1.json', '3.csv', '2.csv', '1.csv'] # liste des fichiers qu'on a uploadé
+        found_file = []
+        soup = BeautifulSoup(self.chrome.page_source,'html.parser') # code html de la page
+        li = soup.find_all("span",{"class":"name"})
+        for elt in li : 
+            found_file.append(elt.get_text())
+        self.checklist(found_file,uploaded_file)
     
     def test_label_delete(self):
         """
@@ -30,6 +66,8 @@ class TestUi(TestCase):
             Les fichiers json seront déjà là, on appuye sur un label pour afficher la croix, puis on clique dessus pour la supprimer
             La suppression des labels se fera de manière aléatoire
         """
+        # clique sur le bouton pour aller à la page label
+
     
     def test_label_hover(self):
         """
