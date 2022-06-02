@@ -6,47 +6,58 @@ import numpy as np
 import ruptures as rpt
 from scipy.optimize import minimize
 
-LIST_OF_MODELS = ["l1", "l2", "linear", "rbf", "normal", "mahalanobis", "rank", "cosine"]
+LIST_OF_MODELS = [
+    "l1",
+    "l2",
+    "linear",
+    "rbf",
+    "normal",
+    "mahalanobis",
+    "rank",
+    "cosine",
+]
 
-# fonction pour "arranger" les fichiers csv 
+# fonction pour "arranger" les fichiers csv
 # par ex à l'heure actuelle faut que la première colonne (l'axe y) s'appelle 'Valeur'
-def standardize_csv(file_path,filename):
-    clean_path = str(file_path)+"/"+str(filename)
+def standardize_csv(file_path, filename):
+    clean_path = str(file_path) + "/" + str(filename)
     # lecture csv
-    data = pd.read_csv(clean_path,float_precision="round_trip",sep='\s+')
+    data = pd.read_csv(clean_path, float_precision="round_trip", sep="\s+")
     # récup les noms de colonnes
     columns_name = data.columns
     columns_name = columns_name
     # float_match = "[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)" # regex match pour les float
     regex_match = "^[a-zA-Z]"
-    for column in columns_name : 
-        x = re.search(regex_match,column)
-        if not x : # cas où le nom de la colonne est un float 
-            template = [ "Valeur"+str(k) for k in range(len(columns_name))]
+    for column in columns_name:
+        x = re.search(regex_match, column)
+        if not x:  # cas où le nom de la colonne est un float
+            template = ["Valeur" + str(k) for k in range(len(columns_name))]
             # template = ['Valeur0', 'Valeur1']
-            temp_df = pd.DataFrame([columns_name],columns=template)
+            temp_df = pd.DataFrame([columns_name], columns=template)
             data.columns = template
-            data = pd.concat([temp_df,data],ignore_index=True)
+            data = pd.concat([temp_df, data], ignore_index=True)
             break
-    data.to_csv(clean_path,index=False,sep=' ')
+    data.to_csv(clean_path, index=False, sep=" ")
 
-def standardize_json(filename_csv,labels,predict=''):
-    with open(filename_csv,"r") as f : 
-        a = f.readlines() 
-    labels.sort() # on s'assure d'avoir des fichiers bien triés
-    clean_label = [elt for elt in labels if elt <= len(a[1:])] # on garde que les éléments qui sont inférieur à la taille max du fichiers csv
+
+def standardize_json(filename_csv, labels, predict=""):
+    with open(filename_csv, "r") as f:
+        a = f.readlines()
+    labels.sort()  # on s'assure d'avoir des fichiers bien triés
+    clean_label = [
+        elt for elt in labels if elt <= len(a[1:])
+    ]  # on garde que les éléments qui sont inférieur à la taille max du fichiers csv
     # cas de figure où le dernier élément ne correspod pas à la taille de la liste et la taille de la liste -1
-    if clean_label[-1] != len(a[1:]) and clean_label[-1] != len(a[1:])-1:
-        clean_label.append(len(a[1:])) 
-    elif clean_label[-1] == len(a[1:])-1 :
+    if clean_label[-1] != len(a[1:]) and clean_label[-1] != len(a[1:]) - 1:
+        clean_label.append(len(a[1:]))
+    elif clean_label[-1] == len(a[1:]) - 1:
         clean_label[-1] = len(a[1:])
     # création d'un fichier json qui contient les indices des labels, porte le même nom que le fichier csv
-    clean_label.sort() # tri la liste dans la cas où les labels n'ont pas été posées dans le bon ordre
-    raw_name = filename_csv.split('.')[:-1]
-    clean_name = '.'.join(raw_name)
-    with open(clean_name+predict+".json","w") as f : 
+    clean_label.sort()  # tri la liste dans la cas où les labels n'ont pas été posées dans le bon ordre
+    raw_name = filename_csv.split(".")[:-1]
+    clean_name = ".".join(raw_name)
+    with open(clean_name + predict + ".json", "w") as f:
         f.write(json.dumps(clean_label))
-    
 
 
 def load_json(filename: Path):
@@ -71,24 +82,25 @@ def load_train_data(folder_train: Path):
             label = load_json(filename=filename)
             header = is_header(filename.with_suffix(".csv"))
             if header:
-                signal = np.loadtxt(fname=filename.with_suffix(".csv"),skiprows=1)
-            else : 
+                signal = np.loadtxt(fname=filename.with_suffix(".csv"), skiprows=1)
+            else:
                 signal = np.loadtxt(fname=filename.with_suffix(".csv"))
             X_train.append(signal)
             y_train.append(label)
     return X_train, y_train
-        
+
 
 def is_header(filename: Path):
     regex_match = "^[a-zA-Z]"
     with open(filename, "r") as fp:
         a = fp.readline()
     cols = a.split(" ")
-    for col in cols : 
-        x =re.search(regex_match,col)
-        if not x : 
-            return False 
+    for col in cols:
+        x = re.search(regex_match, col)
+        if not x:
+            return False
     return True
+
 
 def alpin_learn(
     folder_train: Path, output_filename: Path = Path("pen_opt.json"), model="l2"
@@ -125,7 +137,7 @@ def alpin_predict(
     folder_test,
     pen_opt_filename: Path = Path("pen_opt.json"),
     output_folder: Path = None,
-    model = "l2"
+    model="l2",
 ) -> None:
     err_msg = f"Test folder not found: {folder_test}"
     assert folder_test.exists() and folder_test.is_dir(), err_msg
@@ -137,26 +149,24 @@ def alpin_predict(
     pen_opt_dict = load_json(filename=pen_opt_filename)
     pen_opt = pen_opt_dict["pen_opt"]
     for filename in folder_test.iterdir():
-        if filename.suffix==".csv":
+        if filename.suffix == ".csv":
             header = is_header(filename.with_suffix(".csv"))
             if header:
-                signal = np.loadtxt(fname=filename.with_suffix(".csv"),skiprows=1)
-            else : 
+                signal = np.loadtxt(fname=filename.with_suffix(".csv"), skiprows=1)
+            else:
                 signal = np.loadtxt(fname=filename.with_suffix(".csv"))
             log_T = np.log(signal.shape[0])
             algo = get_algo(model=model)
-            bkps_predited = algo.fit_predict(
-                signal=signal, pen=pen_opt * log_T
-            )
+            bkps_predited = algo.fit_predict(signal=signal, pen=pen_opt * log_T)
             # convert to np.int32 to int for Json serialization
             bkps_predited = np.array(bkps_predited).tolist()
             write_json(
                 obj=bkps_predited,
                 filename=(output_folder / filename.stem).with_suffix(".pred.json"),
-            )  
+            )
 
 
-def get_algo(model: str="l2")->rpt.base.BaseEstimator:
+def get_algo(model: str = "l2") -> rpt.base.BaseEstimator:
     """Return a change-point detection algorithm.
 
     Args:
@@ -170,14 +180,11 @@ def get_algo(model: str="l2")->rpt.base.BaseEstimator:
     err_msg = f"Choose a model in {LIST_OF_MODELS}, not {model}."
     assert model in LIST_OF_MODELS, err_msg
     # choosing the cost function
-    if model=="l2":
+    if model == "l2":
         return rpt.KernelCPD(kernel="linear")
-    elif model=="rbf":
+    elif model == "rbf":
         return rpt.KernelCPD(kernel="rbf")
-    elif model=="cosine":
+    elif model == "cosine":
         return rpt.KernelCPD(kernel="cosine")
     else:
         return rpt.Pelt(model=model)
-
-
-
