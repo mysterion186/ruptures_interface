@@ -8,6 +8,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import time, os
 class TestUi(TestCase):
 
+    @tag("selenium")
     def setUp(self):
         self.chrome = webdriver.Remote(
             command_executor='http://selenium_hub:4444/wd/hub',
@@ -35,11 +36,12 @@ class TestUi(TestCase):
             print(e)
             self.tearDown()
         
-
+    @tag("selenium")
     def tearDown(self) -> None:
         self.chrome.quit()
         return super().tearDown()
     
+    @tag("selenium")
     def checklist(self, list1, list2):
         """
             fonction qui renvoie une erreur si les 2 listes sont différentes
@@ -47,6 +49,7 @@ class TestUi(TestCase):
         for k in range(len(list1)):
             self.assertTrue(list1[k]==list2[k])
 
+    @tag("selenium")
     def test_check_uploaded_file(self):
         """
             Test pour aller sur la page d'accueil
@@ -60,6 +63,7 @@ class TestUi(TestCase):
             found_file.append(elt.get_text())
         self.checklist(found_file,uploaded_file)
     
+    @tag("selenium")
     def test_label_delete(self):
         """
             Test pour supprimer les labels 
@@ -68,25 +72,27 @@ class TestUi(TestCase):
         """
         # clique sur le bouton pour aller à la page label
 
-    
+    @tag("selenium")
     def test_label_hover(self):
         """
             Test pour voir si lorsqu'on passe sur une zone le label devient bel et bien bleu
             utiliser bs4 pour check la couleur inscrit dans le tag
         """
 
+    @tag("selenium")
     def test_label_add(self):
         """
             Test pour ajouter un label en cliquant sur la figure
             (Test le plus dur, essayer de le faire sinon on laisse tomber)
         """
     
+    @tag("selenium")
     def test_label_move(self):
         """
             Test pour voir si on bouge un trait, est ce que le label se met à jour (à faire que si j'arrive à faire le test précédent)
         """
     
-
+    @tag("selenium")
     def test_prediction(self):
         """
             

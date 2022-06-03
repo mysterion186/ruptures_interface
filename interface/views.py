@@ -113,7 +113,7 @@ def get_signals(request):
     if request.method == 'POST':
         request = tools.handle_upload(request,folder_val,"test")
         files = [f for f in request.FILES.getlist("myfile")]
-        return JsonResponse({"status": "success","filename":list(files)}) # on retourne la page d'accueil 
+        return JsonResponse({"status": "success"}) # on retourne la page d'accueil 
 
 # "vue" pour faire appel à alpin_predict 
 def predict(request):
