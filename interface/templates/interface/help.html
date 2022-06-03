@@ -1,0 +1,64 @@
+{% extends 'interface/base.html' %} 
+{% load static %}
+{% block content %}         
+<section id="aide">
+    <div class="text">
+        <h1 id="main_title" class="title">Welcome to the Ruptures Interface help page</h1>
+        <p>
+            This page point is to help you to get started with the Ruptures tools. To do so, we're going to see each pages/functionality et and how to use theam 
+        </p>
+        <h2 class="second_header title">Home</h2>
+        <p>
+            On this page, you have the possibility to upload your signals files as <code>csv</code>. Below you can find some exemple of accepted files.
+            For <code>csv</code> files with several columns, please separete them with <b> a blank space</b>.
+        </p>
+        <section id="image">
+            <div class="img">
+                <img src="{% static 'interface/img/csv_1d_header.png' %}" alt="csv à 1 dimension avec un header">
+                <p class="subtitle">figure 1 : Example of <code>csv</code> file named <code>1.csv</code> with one column and a header ('Valeur0')</p>
+            </div>
+            <div class="image">
+                <img src="{% static 'interface/img/csv_1d_no_header.png' %}" alt="csv à 1 dimension sans header">
+                <p class="subtitle">figure 2 : Example of <code>csv</code> file with one column and no header</p>
+            </div>
+            <div class="image">
+                <img src="{% static 'interface/img/csv_2d_header.png' %}" alt="csv à plusieurs dimension avec header">
+                <p class="subtitle">figure 3 : Example of <code>csv</code> file with several columns and headers</p>
+            </div>
+        </section>
+        <p>
+            Besides <code>csv</code>, files, you can upload <code>json</code> files that contain the position of ruptures in a signal.
+            <section id="image">
+                <div class="img">
+                    <img src="{% static 'interface/img/json_csv_1d.png' %}" alt="label pour le fichier 1.csv de la figure 1">
+                    <p class="subtitle">figure 4 : Screenshot of the file <code>1.json</code> that contains the position of the ruptures for the figure 1 signal</p>
+                </div>
+            </section>
+        <p>
+            The <code>json</code> file upload is optional, but if you do so, you have to give a specific name for the file.
+            The <code>json</code> file containing the labels for the signal <code>x.csv</code> must be named <code>x.json</code>.
+        </p>
+        <h2 class="second_header title">Label</h2>
+        <p>
+            On the <b>Label</b> paeg, you can put labels to your signals to show where break occurs in the signal.
+            If at the previous step, uploaded a <code>json</code> file (respecting the name), labels will be automatically added to the signals (you still have te possibility to delete or modify them).
+            This list is all the possible action that can be performed in this page :
+            <ul>
+                <li> put a label: to do so, you just have to click on the signal where you want to add the label.</li>
+                <li> move a label : once there is a label, you can simply move it (drag and drop).</li>
+                <li> delete a label : If you want to delete a label, you just have to put the mouse above the label info (on the right side), it will colour the label in blue and a red cross will appear. Click on that cross to delete the label.</li>
+                <li> Confirm : Once you have finished labeling a signal, you have to confirm the labels. When you confirmed labels for all signals, you can click on the button "Train".</li>
+            </ul>
+        </p>
+        <h2 class="second_header title">Prédiction</h2>
+        <p>
+            On the  <b>Préeiction</b>,you have the possibility to detect breaks point on your signals.
+            To get your first results, you have to upload your signals. Once you uploaded all you signals, you can click on the detect button to get the detected breaks in your signals.
+            <p>
+                The <code>json</code> file upload is optional, but if you do so, you have to give a specific name for the file. Doing so, you have the possibility to compare between breaks that you found and the ones found by <code>Ruptures</code>.
+                The <code>json</code> file containing the labels for the signal <code>x.csv</code> must be named <code>x.true.json</code>.
+            </p>
+        </p>
+    </div>
+</section>
+{% endblock %}

@@ -7,11 +7,10 @@
 <section id="content">
     <p hidden id="folder_val">{{ folder_val }}</p>
     <div id="helper" class="helper">
-        Sur cette page vous devez téléverser les fichiers sur lesquels vous voulez prédirer les ruptures. 
-        Sur cette page, vous devez mettre les signaux sur lesquels vous vouleé prédirer les ruptures sous la forme de fichier <code>csv</code>. <br>
-        Optionnel, vous avez la possibilité de téléverser des fichiers <code>json</code> qui contiennent les labels d'un signal (pour comparer avec la prédiction de ruptures).
-        Le fichier <code>json</code> contenant les labels du signal <code>x.csv</code> doit s'appeler <code>x.true.json</code>.
-        <a href="{% url 'interface:aide' %}" target="_blank">Cliquez ici pour avoir plus d'informations</a>
+        One this page, you have to upload signals where you want find to detect breaks on the signals as <code>csv</code>. <br>
+        The <code>json</code> file upload is optional, but if you do so, you have to give a specific name for the file.
+        The <code>json</code> file containing the labels for the signal <code>x.csv</code> must be named <code>x.json</code>.
+        <a href="{% url 'interface:aide' %}" target="_blank">Click here to get more informations.</a>
     </div>
     <h1 class="title">Pénalité</h1>
     <section id="predict_wrapper">
@@ -21,18 +20,17 @@
             <div class="predict_grid">
                 <div class="wrapper_predict">
                     <form id="myform" method="post" enctype="multipart/form-data">
-                        <header>Télécharger vos fichiers ici</header>
+                        <header>Upload your signals</header>
                         {% csrf_token %}
                         <input type="file" class="file-input" name="myfile" hidden multiple accept=".csv, .json">
-                        <img src="{% static 'interface/download.gif' %}" alt="download" />
-                        <p>Parcourir les fichiers locaux</p>
+                        <img src="{% static 'interface/img/download.gif' %}" alt="download" />
                     </form>
                 </div>
-                <div class="validation done" id="prediction">Prédire</div>
+                <div class="validation done" id="prediction">Detect</div>
             </div>
         </section>
     </section>
-    <h1 class="title">Résultat</h1>
+    <h1 class="title">Results</h1>
     <section id="result">
         <div id="label_predict" class="uploaded-area"></div>
         <div id="myDiv" style="width: 900px; height: 500px;"></div>
@@ -40,7 +38,7 @@
             <div id="left"></div>
             <div id="right"></div>
         </div>
-        <a href="{% url 'interface:download' %}"><div class ="label_button" id="non_labelise">Télécharger l'archive</div></a>
+        <a href="{% url 'interface:download' %}"><div class ="label_button" id="non_labelise">Download the archive</div></a>
     </section>
 </section>      
 <section id="loading">
@@ -49,5 +47,5 @@
         <div class="b b2"></div>
     </div>
 </section>
-<script src="{% static 'interface/predict.js' %}" type="module"></script>
+<script src="{% static 'interface/js/predict.js' %}" type="module"></script>
 {% endblock %}

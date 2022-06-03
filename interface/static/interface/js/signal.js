@@ -197,14 +197,13 @@ function choosed_file(file_id){
 
 const validation_button = document.getElementById("validation");
 validation_button.addEventListener("click",()=>{
-    if (validation_button.innerHTML === "Valider les labels"){
+    if (validation_button.innerHTML === "Confirm labels"){
         validation();
         filenum++;
         filename[filenum].click();
     }
     else {
         window.location.href=baseUrl+"prediction";
-        console.log('changement de page');
     }
     })
 function validation(){
@@ -238,7 +237,7 @@ function set_validation_text() {
     const processed = document.querySelectorAll(".done");
     const validation_button = document.getElementById("validation");
     if (processed.length === filename.length){
-        validation_button.innerHTML = "Entraîner le modèle";
+        validation_button.innerHTML = "Train";
     }
 }
 

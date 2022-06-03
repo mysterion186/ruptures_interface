@@ -20,23 +20,20 @@ LIST_OF_MODELS = [
     "cosine",
 ]
 
-# fonction pour "arranger" les fichiers csv
 
-# par ex à l'heure actuelle faut que la première colonne (l'axe y) s'appelle 'Valeur'
+# function to give columns names for csv that doesn't have header
 def standardize_csv(file_path, filename):
     clean_path = str(file_path) + "/" + str(filename)
-    # lecture csv
+    # read csv
     data = pd.read_csv(clean_path, float_precision="round_trip", sep="\s+")
-    # récup les noms de colonnes
+    # get columns name
     columns_name = data.columns
-    columns_name = columns_name
-    # float_match = "[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)" # regex match pour les float
     regex_match = "^[a-zA-Z]"
     for column in columns_name:
         x = re.search(regex_match, column)
-        if not x:  # cas où le nom de la colonne est un float
+        if not x:  # case where the 'columns' name is a float
+            # add proper value name for header
             template = ["Valeur" + str(k) for k in range(len(columns_name))]
-            # template = ['Valeur0', 'Valeur1']
             temp_df = pd.DataFrame([columns_name], columns=template)
             data.columns = template
             data = pd.concat([temp_df, data], ignore_index=True)
@@ -44,20 +41,21 @@ def standardize_csv(file_path, filename):
     data.to_csv(clean_path, index=False, sep=" ")
 
 
+# function to standardize json, get ride of index that a superior to the signal lenght, add the signals length if the user forget it, sort the json
 def standardize_json(filename_csv, labels, predict=""):
     with open(filename_csv, "r") as f:
         a = f.readlines()
-    labels.sort()  # on s'assure d'avoir des fichiers bien triés
+    labels.sort()  # sort labels
     clean_label = [
         elt for elt in labels if elt <= len(a[1:])
-    ]  # on garde que les éléments qui sont inférieur à la taille max du fichiers csv
-    # cas de figure où le dernier élément ne correspod pas à la taille de la liste et la taille de la liste -1
+    ]  # keep only element that are inferior to the signals length
+    # case where the last value of the labes are neither signal length-1 or signal length
     if clean_label[-1] != len(a[1:]) and clean_label[-1] != len(a[1:]) - 1:
         clean_label.append(len(a[1:]))
     elif clean_label[-1] == len(a[1:]) - 1:
         clean_label[-1] = len(a[1:])
-    # création d'un fichier json qui contient les indices des labels, porte le même nom que le fichier csv
-    clean_label.sort()  # tri la liste dans la cas où les labels n'ont pas été posées dans le bon ordre
+    # create json file that will store the labels, with the same name that the csv file
+    clean_label.sort()  # sort the list
     raw_name = filename_csv.split(".")[:-1]
     clean_name = ".".join(raw_name)
     with open(clean_name + predict + ".json", "w") as f:
@@ -94,6 +92,7 @@ def load_train_data(folder_train: Path):
     return X_train, y_train
 
 
+# function to check if there is a header in the csv
 def is_header(filename: Path):
     regex_match = "^[a-zA-Z]"
     with open(filename, "r") as fp:
