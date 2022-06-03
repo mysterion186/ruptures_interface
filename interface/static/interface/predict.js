@@ -1,4 +1,4 @@
-import {uploadFile,init_form,processData } from './commun.js'
+import {uploadFile,init_form,processData,display_file} from './commun.js'
 var getUrl = window.location;
 var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" ;
 
@@ -25,13 +25,17 @@ const form = temp[0], fileInput = temp[1];
 const prediction_button = document.getElementById("prediction");
 
 fileInput.onchange = (e)=>{
-    let file = e.target.files[0];
-    if (file){
-        let fileName = file.name;
-        uploadFile(fileName,form,'prediction/signal',false);
-        // on rend le bouton prédiction clickable de nouveau (parce qu'on vient d'uploader un nouveau fichier)
-        prediction_button.classList.remove("done");
+    let file_list = e.target.files;
+    for (var i=0; i<file_list.length; i++){
+        var file = file_list[i];
+        if (file){
+            let fileName = file.name;
+            display_file(fileName,false);
+        }
     }
+    uploadFile(form,'prediction/signal',false);
+    // on rend le bouton prédiction clickable de nouveau (parce qu'on vient d'uploader un nouveau fichier)
+    prediction_button.classList.remove("done");
 };
 
 // fait appel au back pour lancer le code alpin_predict 

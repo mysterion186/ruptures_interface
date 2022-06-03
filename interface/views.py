@@ -21,15 +21,18 @@ def index(request):
     # request.session["folder_val"] = str(folder_val)
     folder_val = request.session.get("folder_val",str(randint(0, 1000))) # si la valeur n'est pas dans la session on donne une valeur random
     request.session["folder_val"] = str(folder_val) # "sécurité" on sauvegarde la valeur du dossier dans la session
-    # si méthode == post => on a uploadé un fichier 
-    if request.method == 'POST' and request.FILES['myfile']:
-        myfile = request.FILES['myfile'] # lecture du fichier depuis la requête
-        fs = FileSystemStorage()
-        if myfile.name.split('.')[-1]=='csv' or myfile.name.split('.')[-1]=='json': # on accepte que les fichiers csv ou json     
-            filename = fs.save(str(folder_val)+"/train/"+myfile.name, myfile) # on enregistre le fichier
-            if myfile.name.split(".")[-1]=="csv": # on standardise que les fichiers csv
-                tools.standardize_csv(str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/",myfile.name) # on le standardise 
-            return render(request, 'interface/index.html') # on retourne la page d'accueil
+    # si méthode == post => on a uploadé un fichier
+    if request.method == 'POST':
+        # for k in range(len(request.FILES.getlist("myfile"))) : 
+        #     print(request.FILES.getlist("myfile")[k])
+        #     myfile = request.FILES.getlist("myfile")[k]
+        #     fs = FileSystemStorage()
+        #     if myfile.name.split('.')[-1]=='csv' or myfile.name.split('.')[-1]=='json': # on accepte que les fichiers csv ou json     
+        #         filename = fs.save(str(folder_val)+"/train/"+myfile.name, myfile) # on enregistre le fichier
+        #         if myfile.name.split(".")[-1]=="csv": # on standardise que les fichiers csv
+        #             tools.standardize_csv(str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/",myfile.name) # on le standardise 
+        request = tools.handle_upload(request,folder_val,"train")
+        return render(request, 'interface/index.html') # on retourne la page d'accueil
     return render(request,"interface/index.html")
 
 
@@ -107,15 +110,10 @@ def get_signals(request):
     # folder_val = request.session.get("folder_val",CURRENT_FOLD)
     folder_val = request.session["folder_val"]
     # si méthode == post => on a uploadé un fichier 
-    if request.method == 'POST' and request.FILES['myfile']:
-        myfile = request.FILES['myfile'] # lecture du fichier depuis la requête
-        fs = FileSystemStorage()
-        if myfile.name.split('.')[-1]=='csv' or myfile.name.split('.')[-1]=='json': # on accepte que les fichiers csv ou json     
-            filename = fs.save(str(folder_val)+"/test/"+myfile.name, myfile) # on enregistre le fichier
-            if myfile.name.split(".")[-1]=="csv": # on standardise que les fichiers csv
-                tools.standardize_csv(str(MEDIA_ROOT)+"/"+str(folder_val)+"/test/",myfile.name) # on le standardise       
-            # return render(request, 'interface/index.html') # on retourne la page d'accueil 
-            return JsonResponse({"status": "success","filename":myfile.name}) # on retourne la page d'accueil 
+    if request.method == 'POST':
+        request = tools.handle_upload(request,folder_val,"test")
+        files = [f for f in request.FILES.getlist("myfile")]
+        return JsonResponse({"status": "success","filename":list(files)}) # on retourne la page d'accueil 
 
 # "vue" pour faire appel à alpin_predict 
 def predict(request):

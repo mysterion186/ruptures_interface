@@ -5,7 +5,8 @@ import re
 import numpy as np
 import ruptures as rpt
 from scipy.optimize import minimize
-
+from django.core.files.storage import FileSystemStorage
+from ruptures_interface.settings import MEDIA_ROOT
 # fonction pour "arranger" les fichiers csv 
 # par ex à l'heure actuelle faut que la première colonne (l'axe y) s'appelle 'Valeur'
 def standardize_csv(file_path,filename):
@@ -149,3 +150,15 @@ def alpin_predict(
                 obj=bkps_predited,
                 filename=(output_folder / filename.stem).with_suffix(".pred.json"),
             )  
+
+# function to handle the file upload process 
+def handle_upload(request,folder_val,sub_folder):
+    if request.method == 'POST':
+        for k in range(len(request.FILES.getlist("myfile"))):
+            myfile = request.FILES.getlist("myfile")[k]
+            fs = FileSystemStorage()
+            if myfile.name.split(".")[-1] =="csv" or myfile.name.split(".")[-1]=="json":
+                file = fs.save(str(folder_val)+"/"+sub_folder+"/"+myfile.name, myfile)
+            if myfile.name.split(".")[-1]=="csv": # on standardise que les fichiers csv
+                standardize_csv(str(MEDIA_ROOT)+"/"+str(folder_val)+"/"+sub_folder+"/",myfile.name) # on le standardise 
+        return request
