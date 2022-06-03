@@ -7,24 +7,24 @@ from django.conf.urls.static import static
 app_name = "interface"
 
 urlpatterns = [
-    path("", views.index, name="index"),  # url de la page d'accueil
-    path("label", views.label, name="label"),  # url de la page pour mettre des labels
+    path("", views.index, name="index"),  # home page url
+    path("label", views.label, name="label"),  # label page url
     path(
         "add", views.get_label, name="get_label"
-    ),  # url pour ajouter des labels aux signaux
+    ),  # page to save labels 
     path(
         "train", views.train, name="train"
-    ),  # url de la page qui va retourner les paramètres obtenues pour la prédiction
+    ),  # url to return the pen values from alpin_learn
     path(
         "delete", views.delete_folder, name="delete"
-    ),  # url pour supprimer un dossier en cas d'erreur de la part de l'utilisateur (signaux labellisé)
-    path("aide", views.aide, name="aide"),  # url vers la page d'aide
+    ),  # url to delete (not used yet)
+    path("aide", views.help, name="aide"),  # help page url
     path(
         "prediction", views.prediction, name="prediction"
-    ),  # url qui va permettre d'uploader les fichiers pour déterminer les ruptures
+    ),  # prediction page url
     path(
         "prediction/signal", views.get_signals, name="upload_signal"
-    ),  # url qui va recevoir les fichiers uploadé
+    ),  # url to upload signal where we want to detect breaks point
     path(
         "prediction/predict", views.predict, name="predict"
     ),  # url pour faire appel à alpin_predict
@@ -32,15 +32,12 @@ urlpatterns = [
         "prediction/coord/<int:folder_val>/<str:folder_name>/<str:filename>",
         views.coord,
         name="coord",
-    ),  # url pour chopper les indices des ruptures
+    ),  # url to get the labels that user uploaded to compare with the breaks detected by ruptures 
     path(
         "download", views.download, name="download"
-    ),  # url pour pouvoir télécharger les dossiers sur lesquels on a travaillé
+    ),  # url to donwload the archive
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
-)  # url pour accèder aux médias
+)  # url to get to the medias
 
-
-if settings.DEBUG:
-    urlpatterns.append(path("tests",views.js_test,name="js_test"))
 

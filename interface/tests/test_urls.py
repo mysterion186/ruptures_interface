@@ -17,28 +17,28 @@ class TestUrls(TestCase):
     
     def send_data(self,file_path,url=''):
         """
-            Fonction pour envoyer un fichier 
+            Function to send data
         """
         with open(file_path,'r') as f :
             self.client.post(url,{"myfile":f})
 
     def test_index_route(self):
         """
-            Test pour s'assurer qu'on fait bien appel à la fonction pour aller vers la page index
+            Test to check if we call the proper function to get to the home page
         """
         url = reverse("interface:index")
         self.assertEquals(resolve(url).func,views.index)
     
     def test_label_route(self):
         """
-            Test pour s'assurer qu'on fait bien appel à la fonction pour aller vers la page label
+            Test to check if we call the proper function to get to the label page
         """
         url = reverse("interface:label")
         self.assertEquals(resolve(url).func,views.label)
     
     def test_prediction_route(self):
         """
-            Test pour s'assurer qu'on fait bien appel à la fonctin pour aller vers la page prédiction
+            Test to check if we call the proper function to get to the prediction page
         """
 
         url = reverse("interface:prediction")
@@ -46,130 +46,131 @@ class TestUrls(TestCase):
     
     def test_redirect_from_label_to_index(self):
         """
-            Test pour s'assurer qu'on est redirigé vers la page index s'il n'y pas de "folder_val" dans la session
+            Test to check that we are redircted to the home page if there is no folder_val in the session
         """
         url = reverse("interface:label")
         response = self.client.get(url)
-        self.assertNotEqual(response.status_code, 200) # code différent de 200 parce qu'il y a eu une redirection
-        self.assertRedirects(response,"/") # indique qu'on est bien sur la page d'accueil
+        self.assertNotEqual(response.status_code, 200) # http code different from 200, because there was a redirection
+        self.assertRedirects(response,"/") # show that we are now in home page
     
     def test_label_with_folder_val_train_empty(self):
         """
-            Test pour s'assurer qu'on reste bien sur la page index dans le cas où il y a la clé "folder_val" dans la session mais le dossier train n'existe pas (pas de fichier uploadé)
+            Test to check that we are in home page in the case where folder_val exists but the train folder doesn't exist (no file uploaded)
         """
-        # ajout de la valeur "folder_val" dans la session
+        # add folder_val to the session
         s = self.client.session
         s.update({"folder_val":str(30)})
         s.save()
         url = reverse("interface:label")
         response = self.client.get(url)
-        self.assertNotEqual(response.status_code, 200) # code différent de 200 parce qu'il y a eu une redirection
-        self.assertRedirects(response,"/") # indique qu'on est bien sur la page d'accueil
+        self.assertNotEqual(response.status_code, 200) # http code different from 200, because there was a redirection
+        self.assertRedirects(response,"/") # show that we are now in home page
 
     def test_label_with_folder_val_train_not_empty(self):
         """
-            Test pour vérifier qu'on va bien sur la page label si la clé "folder_val" existe + le dossier train n'est pas vide
+            Test to check that we are in label page if the key folder_val exists + train folder is not empty 
         """
         s = self.client.session
         s.update({"folder_val":str(30)})
         s.save()
         url = reverse("interface:label")
-        # envoie de fichier pour s'assurer que le dossier train existe
+        # send files to be sure that the train folder exists
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_no_header_1D.csv",'')
 
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200) # code égale à 200 parce qu'il n'y a pas de redirection
-        self.assertTemplateUsed(response,"interface/label.html") # indique qu'on a bien utilisé le template label donc qu'on est sur la page label 
+        self.assertEqual(response.status_code, 200) # http code equals to 200, means that we got the right page, no redirection
+        self.assertTemplateUsed(response,"interface/label.html") # show that we use the label html template
         self.delete_folder()
 
 
     def test_redirect_from_prediction_to_index(self):
         """
-            Test pour s'assurer qu'on est bien redirigé vers la page index s'il n'y a pas de "folder_val" dans la session
+            Test to be sure that we're redirect to the home page if there is no "folder_val" in the session
         """
         url = reverse("interface:prediction")
         response = self.client.get(url)
-        self.assertNotEqual(response.status_code, 200) # code différent de 200 parce qu'il y a eu une redirection
-        self.assertRedirects(response,"/") # indique qu'on est bien sur la page d'accueil
+        self.assertNotEqual(response.status_code, 200) # http code different from 200, because there was a redirection
+        self.assertRedirects(response,"/") # show that we are now in home page
     
     def test_redirect_from_prediction_to_index_empty_folder(self):
         """
-            Test pour s'assurer qu'on est bien redirigé vers la page index s'il "folder_val" dans la session mais le dossier train n'existe pas
+            Test to be sure that we are redirected to the home page if there is "folder_val" in the session but the train folder is empty
         """
         s = self.client.session
         s.update({"folder_val":str(30)})
         s.save()
         url = reverse("interface:prediction")
         response = self.client.get(url)
-        self.assertNotEqual(response.status_code, 200) # code différent de 200 parce qu'il y a eu une redirection
-        self.assertRedirects(response,"/") # indique qu'on est bien sur la page d'accueil
+        self.assertNotEqual(response.status_code, 200) # http code different from 200, because there was a redirection
+        self.assertRedirects(response,"/") # show that we are now in home page
 
     def test_redirect_from_prediction_to_label_only_csv(self):
         """
-            Test pour s'assurer qu'on retourne bien sur la page label si tous les fichiers csv présent dans le dossier train n'ont pas de fichier json qui contient les labels
+            Test to be sure that we are redirected to the label page, if all csv files don't have their json file that contains labels
         """
         s = self.client.session
         s.update({"folder_val":str(30)})
         s.save()
         url = reverse("interface:prediction")
-        # envoie de fichier (les fichiers en soit ne sont pas important)
+        # send files
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_no_header_1D.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_header_1D.csv",'')
         
-        # on a envoyé les fichiers (le dossier train existe) + folder_val existe. si on va sur prediction on doit retourner sur label
+        # sent file (train folder exists) + folder_val exists => should be redirected to label (missing json)
         response = self.client.get(url)
-        self.assertNotEqual(response.status_code, 200) # code différent de 200 parce qu'il y a eu une redirection
-        self.assertRedirects(response,"/label") # indique qu'on est bien sur la page label
+        self.assertNotEqual(response.status_code, 200) # http code different from 200, because there was a redirection
+        self.assertRedirects(response,"/label") # show that we are now in label page
         self.delete_folder()
 
     def test_redirect_from_prediction_to_accueil_not_csv(self): 
         """
-            Test pour s'assurer qu'on retourne bien sur la page d'accueil s'il y a 0 fichiers csv dans le dossier train
+            Test to be sur that we redirected to home page if folder_val exists but there is no csv file in le train folder
         """
         s = self.client.session
         s.update({"folder_val":str(30)})
         s.save()
         url = reverse("interface:prediction")
-        # envoie de fichier (les fichiers en soit ne sont pas important)
+        # send file
         self.send_data(str(BASE_DIR)+"/interface/tests/files/label/csv_no_header_1D.json",'')
         
-        # on a envoyé les fichiers (le dossier train existe) + folder_val existe. si on va sur prediction on doit retourner sur label
+        # sent file (train folder exists) + folder_val exists. If we go the prediction we should be redirected to lable page
         response = self.client.get(url)
-        self.assertNotEqual(response.status_code, 200) # code différent de 200 parce qu'il y a eu une redirection
-        self.assertRedirects(response,"/") # indique qu'on est bien sur la page accueil
+        self.assertNotEqual(response.status_code, 200) # http code different from 200, because there was a redirection
+        self.assertRedirects(response,"/") # show that we are now in home page
         self.delete_folder()
 
     def test_redirect_from_prediction_to_label_csv_json_num_not_equal(self):
         """
-            Test pour s'assurer qu'on retourne sur la page label si les fichiers csv n'ont pas leurs fichiers json
+            Test to be sure that we go back to label page if they don't have their json file
         """
         s = self.client.session
         s.update({"folder_val":str(30)})
         s.save()
         url = reverse("interface:prediction")
 
-        # on envoie des csv + json pour prédire sur les signaux à 1 dimension (il manque le json pour le fichier 3.csv)
+        # send csv + json file to predict 1d signal (missing json for 3.csv)
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/1.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/1.json",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/2.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/2.json",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/3.csv",'')
-        # on a envoyé les fichiers (le dossier train existe) + folder_val existe. si on va sur prediction on doit retourner sur label
+
+        # send file (dossier train exists) + folder_val exists. If we go to prediction we should be redirected to label
         response = self.client.get(url)
-        self.assertNotEqual(response.status_code, 200) # code différent de 200 parce qu'il y a eu une redirection
-        self.assertRedirects(response,"/label") # indique qu'on est bien sur la page label       
+        self.assertNotEqual(response.status_code, 200) # http code different from 200, because there was a redirection
+        self.assertRedirects(response,"/label") # show that we are now in home page
         self.delete_folder()
     
     def test_redirect_from_prediction_to_prediction_csv_json_num_equal(self):
         """
-            Test pour s'assurer qu'on reste sur la page prediction car les fichiers csv ont les fichiers json qui les correspondent
+            Test to check that we stay in prediction page if all csv files have their json files
         """
         s = self.client.session
         s.update({"folder_val":str(30)})
         s.save()
         url = reverse("interface:prediction")
 
-        # on envoie des csv + json pour prédire sur les signaux à 1 dimension (il manque le json pour le fichier 3.csv)
+        # send file 
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/1.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/1.json",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/2.csv",'')
@@ -177,8 +178,8 @@ class TestUrls(TestCase):
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/3.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/3.json",'')
 
-        # on a envoyé les fichiers (le dossier train existe) + folder_val existe. si on va sur prediction on doit retourner sur label
+        # sent files (train folder exists) + folder_val exists. If we go to prediction we should stay here
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200) # code égale à 200 car on doit pas avoir de redirection là
-        self.assertTemplateUsed(response,"interface/prediction.html") # indique qu'on a bien utilisé le template label donc qu'on est sur la page label 
+        self.assertEqual(response.status_code, 200) # http code equals to 200, means that we got the right page, no redirection
+        self.assertTemplateUsed(response,"interface/prediction.html") # show that we use the label html template
         self.delete_folder()

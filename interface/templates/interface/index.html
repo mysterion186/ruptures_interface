@@ -5,18 +5,17 @@
 
 <section id = "file_input">
     <div class="helper">
-        Sur cette page, vous devez mettre vos signaux sous la forme de fichier <code>csv</code>. <br>
-        Optionnel, vous avez la possibilité de téléverser des fichiers <code>json</code> qui contiennent les labels d'un signal.
-        Le fichier <code>json</code> contenant les labels du signal <code>x.csv</code> doit s'appeler <code>x.json</code>.
-        <a href="{% url 'interface:aide' %}" target="_blank">Cliquez ici pour avoir plus d'informations</a>
+        On this page, you have the possibility to upload your signals files as <code>csv</code>.<br>
+        The <code>json</code> file upload is optional, but if you do so, you have to give a specific name for the file.
+        The <code>json</code> file containing the labels for the signal <code>x.csv</code> must be named <code>x.json</code>.
+        <a href="{% url 'interface:aide' %}" target="_blank">Click here to get more informations.</a>
     </div>
     <div class="wrapper">
         <form id="myform" method="post" enctype="multipart/form-data">
-            <header>Télécharger vos fichiers ici</header>
+            <header>Upload your signals</header>
             {% csrf_token %}
             <input type="file" class="file-input" name="myfile" hidden multiple accept=".csv,.json">
-            <img src="{% static 'interface/download.gif' %}" alt="download" />
-            <p>Parcourir les fichiers locaux</p>
+            <img src="{% static 'interface/img/download.gif' %}" alt="download" />
         </form>
         <section class="file">
         <section class="progress-area"></section>
@@ -24,7 +23,7 @@
     </div>
 </section>
 <section id="button">
-    <a href="{% url 'interface:label' %}" class="done"><div class ="label_button" id="non_labelise">Passer à l'étape suivante</div></a>
+    <a href="{% url 'interface:label' %}" class="done"><div class ="label_button" id="non_labelise">Go to the next step</div></a>
 </section>
-<script src="{% static 'interface/script.js' %}" type="module" ></script>
+<script src="{% static 'interface/js/script.js' %}" type="module" ></script>
 {% endblock %}

@@ -3,8 +3,8 @@ var getUrl = window.location;
 var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" ;
 
 console.log("Ed 2");
-const folder_val = document.getElementById("folder_val"); // on choppe le dossier de la session
-// console.log("appelle axios ",baseUrl+'train')
+const folder_val = document.getElementById("folder_val"); // get session value
+
 axios(baseUrl+'train').then((response) => {
     console.log(response);
     const load = document.getElementById("loading");
@@ -19,7 +19,7 @@ axios(baseUrl+'train').then((response) => {
 });
 
 
-// initialisation des events listener du formulaire 
+// init event listener for the form
 const temp = init_form();
 const form = temp[0], fileInput = temp[1];
 const prediction_button = document.getElementById("prediction");
@@ -34,46 +34,48 @@ fileInput.onchange = (e)=>{
         }
     }
     uploadFile(form,'prediction/signal',false);
-    // on rend le bouton prédiction clickable de nouveau (parce qu'on vient d'uploader un nouveau fichier)
+    // get the predict button clickable again (because we uploaded new files)
     prediction_button.classList.remove("done");
 };
 
-// fait appel au back pour lancer le code alpin_predict 
+// get request to call alpin_learn
 prediction_button.addEventListener("click", () => {
     const file_predict = document.querySelectorAll(".filename");
     file_predict.forEach(elt => elt.addEventListener('click', ()=>{reset_page();reset_choosed_file();choosed_file(elt.id);makeplot(baseUrl+elt.id);}));
-    axios.get("prediction/predict").then((response)=>{console.log(response);file_predict[0].click()}); // on clique sur le premier élément pour indiquer que la prédiction est terminée
-    // on rend le bounton prédiction non clickable
+    axios.get("prediction/predict").then((response)=>{console.log(response);file_predict[0].click()}); // click on the first file (to plot the graph as soon as we get the result from alpin_lear)
+    // get the predict button unclickable (because ne file was uploaded)
     prediction_button.classList.add("done");
 });
 
-// fonction pour indiquer qu'on vient de cliquer sur un fichier
+
+// function to show that we clicked on a file (add orange border around the clicked file)
 function choosed_file(file_id){
     const filename = document.getElementById(file_id);
     filename.classList.add("choosed");
 }
 
 // fonction pour réinitialiser les fichiers 'séléctioné' 
+// function to remove the orange border from previously selected file
 function reset_choosed_file(){
     const choosed = document.querySelectorAll(".choosed");
     for (let i=0; i<choosed.length; i++){
         choosed[i].classList.remove("choosed");
     }
 }
-// fonction pour pré-process le signal sélectionné
+// function that will preprocess the file (retrieve the file)
 function makeplot(filename) {
     d3.dsv(' ')(filename, function(data){ processData(data,makePlotly) } );
   };
-// fonction qui va afficher les graphiques 
+// function that will plot the chart
 function makePlotly( traces,line_bottom,line_top ){
     const plotDiv = document.getElementById("myDiv");
     const display = document.getElementById("left");
-    const select_file = document.querySelector(".choosed"); // récuperration du fichiers choisi
+    const select_file = document.querySelector(".choosed"); // get the name of the selected file
     var layout = { 
         title : select_file.innerHTML,
         hovermode:'closest',
         shapes: []};
-    // code plotly pour indiquer quel array correspond à quoi
+    // get request to get labels if they were uploaded by the user
     axios.get(`prediction/coord/${folder_val.innerHTML}/test/${select_file.innerHTML}`).then((response)=>{
         const predicted_value = response["data"]["array"];
         console.log("predit ",predicted_value);
@@ -118,10 +120,10 @@ function makePlotly( traces,line_bottom,line_top ){
         Plotly.redraw('myDiv');
     });
     
-    Plotly.newPlot('myDiv', traces,layout,{editable: false,}); // code plotly pour afficher le graph dans la page HTMl
+    Plotly.newPlot('myDiv', traces,layout,{editable: false,}); // ploty code to display the graph on the web page
 }
 
-// fonction pour reset la page
+// function to reset the page (get rid of the labels...)
 function reset_page(){
     const labels_zone = document.querySelectorAll(".label_coordinate");
     for (var i=0; i<labels_zone.length; i++) {

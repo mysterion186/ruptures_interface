@@ -15,7 +15,7 @@ class TestUi(TestCase):
             desired_capabilities=DesiredCapabilities.CHROME
         )
 
-        # on clique sur la zone pour uploader un fichier
+        # click on the upload file zone and send data
         self.chrome.get('http://web:8000')
         time.sleep(5)
         try : 
@@ -27,7 +27,7 @@ class TestUi(TestCase):
             file_input.send_keys("/src/train/2.json")
             file_input.send_keys("/src/train/3.json")
             time.sleep(5)
-            # détermine la valeur de la session (pour la supprimer à la fin de chaque test)
+            # get the session value to delete the folder after the test 
             all_subdirs =os.listdir(settings.MEDIA_ROOT)
             print(all_subdirs)
             self.folder_val = max(all_subdirs, key=os.path.getmtime) 
@@ -44,7 +44,7 @@ class TestUi(TestCase):
     @tag("selenium")
     def checklist(self, list1, list2):
         """
-            fonction qui renvoie une erreur si les 2 listes sont différentes
+            function that check if 2 lists are equals
         """
         for k in range(len(list1)):
             self.assertTrue(list1[k]==list2[k])
@@ -52,44 +52,44 @@ class TestUi(TestCase):
     @tag("selenium")
     def test_check_uploaded_file(self):
         """
-            Test pour aller sur la page d'accueil
+            Test to get to the home page
             Dans le setUp, on va déjà envoyer des fichiers, on s'assure qu'ils se trouvent dans la zone adéquate
         """
-        uploaded_file = ['3.json', '2.json', '1.json', '3.csv', '2.csv', '1.csv'] # liste des fichiers qu'on a uploadé
+        uploaded_file = ['3.json', '2.json', '1.json', '3.csv', '2.csv', '1.csv'] # uploaded file list
         found_file = []
-        soup = BeautifulSoup(self.chrome.page_source,'html.parser') # code html de la page
+        soup = BeautifulSoup(self.chrome.page_source,'html.parser') # page html source code
         li = soup.find_all("span",{"class":"name"})
         for elt in li : 
             found_file.append(elt.get_text())
-        self.checklist(found_file,uploaded_file)
+        self.checklist(found_file,uploaded_file) # check if the uploaded file are displayed 
     
     @tag("selenium")
     def test_label_delete(self):
         """
-            Test pour supprimer les labels 
-            Les fichiers json seront déjà là, on appuye sur un label pour afficher la croix, puis on clique dessus pour la supprimer
-            La suppression des labels se fera de manière aléatoire
+            Test to delete labels
+            Click on a label to display the cross and then click on the cross to delete the label
+            Labels deletion will be in a random way
         """
         # clique sur le bouton pour aller à la page label
 
     @tag("selenium")
     def test_label_hover(self):
         """
-            Test pour voir si lorsqu'on passe sur une zone le label devient bel et bien bleu
-            utiliser bs4 pour check la couleur inscrit dans le tag
+            Test to check if a label becomes blue when we hover it
+            use bs4 to check the colour value in html tag
         """
 
     @tag("selenium")
     def test_label_add(self):
         """
-            Test pour ajouter un label en cliquant sur la figure
+            Test to add label by clicking 
             (Test le plus dur, essayer de le faire sinon on laisse tomber)
         """
     
     @tag("selenium")
     def test_label_move(self):
         """
-            Test pour voir si on bouge un trait, est ce que le label se met à jour (à faire que si j'arrive à faire le test précédent)
+            Test to see if moving a label, updates the value 
         """
     
     @tag("selenium")

@@ -23,7 +23,7 @@ class TestView(TestCase):
 
     def send_data(self,file_path,url=''):
         """
-            Fonction pour envoyer un fichier 
+            Function to send file
         """
         with open(file_path,'r') as f :
             self.client.post(url,{"myfile":f})
@@ -31,26 +31,25 @@ class TestView(TestCase):
     
     def checklist(self, list1, list2):
         """
-            fonction qui renvoie une erreur si les 2 listes sont différentes
+            Function to check if 2 lists are equals
         """
         for k in range(len(list1)):
             self.assertTrue(list1[k]==list2[k])
         
-    # envoie de fichier csv,json au backend /Users/kowsikan/ESIEE/E4/stage/ENS/projet/ruptures_interface/interface/tests/files/1.csv
     def test_upload_file_accueil(self):
         """
-            Test pour s'assurer que les fichiers qu'on upload se trouvent bien dans le dossier 30 (cf setUP) dans media 
-            Cas où on envoie un fichier à 1 dimension  sans header -> vérifier qu'il y a un header + que le fichier existe
-            Cas où on envoie un fichier à 1 dimension  avec header -> vérifier qu'il n'y a pas de doublon de header + que le fichier existe
-            Cas où on envoie un fichier à 2 dimensions avec header -> vérifier qu'il n'y a pas de doublon de header + que le fichier existe
-            Cas où on envoie un fichier à 2 dimensions sans header -> vérifier qu'il y a un header + que le fichier existe  
+            Test to check that all uploaded files are in the folder media/30 (cf setUp)
+            Case where we send 1d file with no header -> check that there is a header + file exists
+            Case where we send a 1d file with header -> check that there is a header + file exists
+            Case where we send a 2d file with header -> check that there is a header + file exists
+            Case where we send a 2d file with no header -> check that there is a header + file exists
         """
 
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_no_header_1D.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_header_1D.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_header_2D.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_no_header_2D.csv",'')
-        self.send_data(str(BASE_DIR)+"/interface/tests/files/aide.html",'') # fichier qui ne devrait pas apparaître dans le dossier car ne respecte pas l'ext csv ou json
+        self.send_data(str(BASE_DIR)+"/interface/tests/files/aide.html",'') # file that shouldn't be uploaded because we only process csv and json file
         
         self.assertTrue(os.path.exists(self.file_path+'/train/csv_no_header_1D.csv'))
         self.assertTrue(tools.is_header(Path(self.file_path+'/train/csv_no_header_1D.csv')))
@@ -76,7 +75,7 @@ class TestView(TestCase):
         f3 = open(str(BASE_DIR)+"/interface/tests/files/header/csv_header_2D.csv","r")
         f4 = open(str(BASE_DIR)+"/interface/tests/files/aide.html","r") # this file shouldn"t be in the media folder
 
-        # sending data 
+        # sending data with 1 post request
         self.client.post('',{"myfile":[f1,f2,f3,f4]})
 
         # checking if files are here + if they have the good format 
@@ -94,34 +93,33 @@ class TestView(TestCase):
     # test pour voir si les fichiers json sont bien "standardisé" 
     def test_check_json_standard_train(self):
         """
-            Test pour s'assurer que les fichiers json sont bien créés et que la dernière valeur du label est bien la taille du fichier csv lorsuq'on upload sur la page accueil
-            Cas où on ne renseigne pas la dernière valeur -> faut vérifier que la dernière valeur est là
-            Cas où on renseigne la dernière valeur -> faut vérifier qu'il n'y a pas de doublon de la dernière valeur
-            Cas où on ajoute des valeurs supérieurs à la taille du fichier csv -> les supprimer et garder uniquement les valeurs inférieur à la taille de fichier csv
+            Test to check that the last value of the json file is the signal length
+            Case where the labels last value is not the signal length -> check if lats value is there
+            Case where the labels are greater than the signal length -> check if that no values is greater than the signal length
         """
         
-        # envoie des fichiers csv
+        # send csv file
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_no_header_1D.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_header_1D.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_header_2D.csv",'')
 
-        # envoie des fichiers json un avec le dernier indice et l'autre sans
+        # send json file (with and without last value)
         self.send_data(str(BASE_DIR)+"/interface/tests/files/label/csv_no_header_1D.json",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/label/csv_header_1D.json",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/label/csv_header_2D.json",'')
         
-        # liste contenant les valeurs qu'on est censé obtenir dans les fichiers json 
+        # json expected output
         label_json_1 = [120, 248, 375, 500]
         label_json_2 = [253, 492, 752,1000]
         label_json_3 = [82, 173, 259, 350]
 
 
-        # liste qu'on retrouve dans les json après avoir fait appel à label
+        # labels that were uploaded
         test_json_1 = tools.load_json(Path(self.file_path+"/train/csv_no_header_1D.json")) # [120, 248, 375, 499]
         test_json_2 = tools.load_json(Path(self.file_path+"/train/csv_header_1D.json")) # [253, 492, 752]
         test_json_3 = tools.load_json(Path(self.file_path+"/train/csv_header_2D.json")) # [82, 173, 259, 350,750,858]
         
-        # l'utilisateur va sur la page label
+        # mimic user going to the prediction page, call the function to standardize json file
         tools.standardize_json((self.file_path+"/train/csv_no_header_1D.csv"),test_json_1)
         tools.standardize_json((self.file_path+"/train/csv_header_1D.csv"),test_json_2)
         tools.standardize_json((self.file_path+"/train/csv_header_2D.csv"),test_json_3)
@@ -131,12 +129,12 @@ class TestView(TestCase):
         test_json_3 = tools.load_json(Path(self.file_path+"/train/csv_header_2D.json"))
         
 
-        # on s'assure que les listes aient la même taille
+        # check that json file have the same length
         self.assertTrue(len(label_json_1)==len(test_json_1), f"label_json = {label_json_1}, test_json = {test_json_1}" )
         self.assertTrue(len(label_json_2)==len(test_json_2), f"label_json = {label_json_2}, test_json = {test_json_2}")
         self.assertTrue(len(label_json_3)==len(test_json_3), f"label_json = {label_json_3}, test_json = {test_json_3}")
 
-        # on s'assure que les listes sont égales
+        # check that both json files are equals
         self.checklist(test_json_1,label_json_1)
         self.checklist(test_json_2,label_json_2)
         self.checklist(test_json_3,label_json_3)
@@ -144,21 +142,21 @@ class TestView(TestCase):
 
     def test_train_pen_1D(self):
         """
-            Test pour s'assurer que les valeurs de penalité déterminée correspondent à ce que l'on veut pour les signaux à une dimension
+            Test to see if the pen opt correspond to what we expect for 1D signals
         """
-        # envoie des signaux et des labels pour entraîner le modèle
+        # send signal and label to train ruptures
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/1.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/1.json",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/2.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/2.json",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train/3.csv",'')
-        post_dict = {"filename":f"media/{self.folder_val}/train/3.csv","labels":["102", "209", "312", "434", "559", "673", "787", "893", "1000"]}
+        post_dict = {"filename":f"media/{self.folder_val}/train/3.csv","labels":["102", "209", "312", "434", "559", "673", "787", "893", "1000"]} # mimic the post request when the user put label when he didn't provide json file
         self.client.post('/add',json.dumps(post_dict),content_type="application/json")
 
-        # chemin d'accès vers le dossier train + fichier où écrire le json
+        # folder_path to where write the json output
         folder_path = self.file_path+"/train/"
         json_path = self.file_path+"/pen_opt.json"
-        # phase de train
+        # call the learn function
         tools.alpin_learn(Path(folder_path),Path(json_path))
 
         pen_opt_dict = tools.load_json(filename=json_path)
@@ -167,7 +165,7 @@ class TestView(TestCase):
 
     def test_train_pen_2D(self):
         """
-            Test pour s'assure que la valeur de pénalité déterminée correspond à ce que l'on veur pour les signaux à 2 dimensions
+            Test to see if the pen opt correspond to what we expect for 2D signals
         """
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train2D/1.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train2D/1.json",'')
@@ -176,14 +174,13 @@ class TestView(TestCase):
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train2D/3.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train2D/3.json",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train2D/4.csv",'')
-        # self.send_data(str(BASE_DIR)+"/interface/tests/files/train2D/4.json",'')
-        post_dict = {"filename":f"media/{self.folder_val}/train/4.csv","labels":["98", "200"]}
+        post_dict = {"filename":f"media/{self.folder_val}/train/4.csv","labels":["98", "200"]} # mimic the post request when the user put label when he didn't provide json file
         self.client.post('/add',json.dumps(post_dict),content_type="application/json")
 
-         # chemin d'accès vers le dossier train + fichier où écrire le json
+        # folder_path to where write the json output
         folder_path = self.file_path+"/train/"
         json_path = self.file_path+"/pen_opt.json"
-        # phase de train
+        # call the learn function
         tools.alpin_learn(Path(folder_path),Path(json_path))
 
         pen_opt_dict = tools.load_json(filename=json_path)
@@ -192,7 +189,7 @@ class TestView(TestCase):
     
     def test_train_pen_6(self):
         """
-            Test pour s'assure que la valeur de pénalité déterminée correspond à ce que l'on veur pour les signaux à 6 dimensions
+            Test to see if the pen opt correspond to what we expect for 6D signals
         """
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train6D/1.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train6D/1.json",'')
@@ -203,10 +200,10 @@ class TestView(TestCase):
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train6D/4.csv",'')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/train6D/4.json",'')
 
-         # chemin d'accès vers le dossier train + fichier où écrire le json
+        # folder_path to where write the json output
         folder_path = self.file_path+"/train/"
         json_path = self.file_path+"/pen_opt.json"
-        # phase de train
+        # call the learn function
         tools.alpin_learn(Path(folder_path),Path(json_path))
 
         pen_opt_dict = tools.load_json(filename=json_path)
@@ -215,39 +212,36 @@ class TestView(TestCase):
 
     def test_check_json_standard_predict(self):
         """
-            Test pour s'assurer que les fichiers json sont bien créés et que la dernière valeur du label est bien la taille du fichier csv lorsuq'on upload sur la page prediction
-            Cas où on ne renseigne pas la dernière valeur -> faut vérifier que la dernière valeur est là
-            Cas où on renseigne la dernière valeur -> faut vérifier qu'il n'y a pas de doublon de la dernière valeur
-            Cas où on ajoute des valeurs supérieurs à la taille du fichier csv -> les supprimer et garder uniquement les valeurs inférieur à la taille de fichier csv
+           Test to check that the last value of the json file is the signal length in the prediction page
+            Case where the labels last value is not the signal length -> check if lats value is there
+            Case where the labels are greater than the signal length -> check if that no values is greater than the signal length
         """
         
-        # envoie des fichiers csv
+        # send csv file
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_no_header_1D.csv",'/prediction/signal')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_header_1D.csv",'/prediction/signal')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_header_2D.csv",'/prediction/signal')
 
-        # envoie des fichiers json un avec le dernier indice et l'autre sans
+        # send json file (with and without last value)
         self.send_data(str(BASE_DIR)+"/interface/tests/files/label/csv_no_header_1D.json",'/prediction/signal')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/label/csv_header_1D.json",'/prediction/signal')
         self.send_data(str(BASE_DIR)+"/interface/tests/files/label/csv_header_2D.json",'/prediction/signal')
-        
-        # envoie d'un fichier qui n'est pas un csv ni un json pour être sûr qu'il ne sera pas téléchargé
         self.send_data(str(BASE_DIR)+"/interface/tests/files/aide.html",'') # fichier qui ne devrait pas apparaître dans le dossier car ne respecte pas l'ext csv ou json
-        # vérif pour être sûr que le fichier n'existe pas
-        self.assertFalse(os.path.exists(self.file_path+'/train/aide.html'))
+
+        self.assertFalse(os.path.exists(self.file_path+'/train/aide.html')) # check that the file doesn't exist
         
-        # liste contenant les valeurs qu'on est censé obtenir dans les fichiers json 
+        # json expected output
         label_json_1 = [120, 248, 375, 500]
         label_json_2 = [253, 492, 752,1000]
         label_json_3 = [82, 173, 259, 350]
 
 
-        # liste qu'on retrouve dans les json après avoir fait appel à label
+        # labels that were uploaded
         test_json_1 = tools.load_json(Path(self.file_path+"/test/csv_no_header_1D.json")) # [120, 248, 375, 499]
         test_json_2 = tools.load_json(Path(self.file_path+"/test/csv_header_1D.json")) # [253, 492, 752]
         test_json_3 = tools.load_json(Path(self.file_path+"/test/csv_header_2D.json")) # [82, 173, 259, 350,750,858]
         
-        # l'utilisateur va sur la page label
+        # mimic user going to the prediction page, call the function to standardize json file
         tools.standardize_json((self.file_path+"/test/csv_no_header_1D.csv"),test_json_1)
         tools.standardize_json((self.file_path+"/test/csv_header_1D.csv"),test_json_2)
         tools.standardize_json((self.file_path+"/test/csv_header_2D.csv"),test_json_3)
@@ -257,12 +251,12 @@ class TestView(TestCase):
         test_json_3 = tools.load_json(Path(self.file_path+"/test/csv_header_2D.json"))
         
 
-        # on s'assure que les listes aient la même taille
+        # check that json file have the same length
         self.assertTrue(len(label_json_1)==len(test_json_1), f"label_json = {label_json_1}, test_json = {test_json_1}" )
         self.assertTrue(len(label_json_2)==len(test_json_2), f"label_json = {label_json_2}, test_json = {test_json_2}")
         self.assertTrue(len(label_json_3)==len(test_json_3), f"label_json = {label_json_3}, test_json = {test_json_3}")
 
-        # on s'assure que les listes sont égales
+        # check that both json files are equals
         self.checklist(test_json_1,label_json_1)
         self.checklist(test_json_2,label_json_2)
         self.checklist(test_json_3,label_json_3)

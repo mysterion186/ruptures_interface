@@ -7,10 +7,9 @@
 
 <section class="label_wrapper">
     <div id="helper" class="helper">
-        Sur cette page vous devez indiquer en cliquant sur le graphique les endroits où ont lieu des ruptures,
-         il y a plusieurs fonctionnalité comme déplacer un label ou bien le supprimer.
-         <a href="{% url 'interface:aide' %}" target="_blank">Cliquez ici pour avoir plus d'informations.</a>
-         Une fois que vous avez validé tous les labels, vous pouvez entraîner le modèle.
+        On this page, you have to click on the chart where there you find breaks on your signal, there are a lot of possibility like moving a lable or deleting it.
+         <a href="{% url 'interface:aide' %}" target="_blank">Click here to get more informations.</a>
+         Once you confirmed all labels, you can find the penalty value.
     </div>
     <section class="label">
         <p hidden id="folder_val">{{ folder_val }}</p>
@@ -27,7 +26,7 @@
             <h1 class="filename" id="media/{{ folder_val }}/train/{{ myfile }}">{{ myfile }}</a></h1>
         {% endfor %}
     </div>
-    <div class="validation" id="validation">Valider les labels</div>
+    <div class="validation" id="validation">Confirm labels</div>
 </section>
-<script src="{% static 'interface/signal.js' %}" type="module"></script>
+<script src="{% static 'interface/js/signal.js' %}" type="module"></script>
 {% endblock %}

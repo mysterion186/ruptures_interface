@@ -1,4 +1,4 @@
-// fichier qui va contenir les fonctions qui seront souvent utilisées 
+// files that will contains all function that are used in several js files
 
 // function that will display uploaded files on the right side 
 function display_file(name,home=true){
@@ -6,12 +6,12 @@ function display_file(name,home=true){
         var uploadedArea = document.querySelector(".uploaded-area");
         var uploadHTML = `<li class="row">
                                         <div class="content">
-                                            <img src="/static/interface/csv.png" alt="csv" />
+                                            <img src="/static/interface/img/csv.png" alt="csv" />
                                             <div class="details">
                                                 <span class="name">${name}</span>
                                             </div>
                                         </div>
-                                        <img src="/static/interface/check.png" alt="check" />
+                                        <img src="/static/interface/img/check.png" alt="check" />
                                     </li>`;
                     uploadedArea.insertAdjacentHTML("afterbegin",uploadHTML);
     }
@@ -19,7 +19,6 @@ function display_file(name,home=true){
         const folder_val = document.getElementById("folder_val"); // on choppe le dossier de la session
         var fileArea = document.getElementById("label_predict");
         const detect_ext = name.split(".");
-        // console.log(detect_ext[detect_ext.length-1]);
         if (detect_ext[detect_ext.length-1]==="csv"){
             var predict_name = `<h1 class="filename" id="media/${folder_val.innerHTML}/test/${name}">${name}</a></h1>`;
             fileArea.innerHTML +=predict_name;
@@ -31,7 +30,7 @@ function display_file(name,home=true){
     }
 }    
 
-// fonction qui va uploader le fichier sur le serveur + afficher le fichier en cours de téléchargement et tous ceux téléchargé
+// function that is used to send form to the 'post_url' value
 function uploadFile(form,post_url=''){
     var formData = new FormData(form);
     axios.post(post_url,formData); // envoie du fichier au serveur
@@ -39,7 +38,7 @@ function uploadFile(form,post_url=''){
 
 
 function init_form(){
-    // code pour rendre le formulaire d'upload responsive...
+    // code to get the upload form responsive...
     const form = document.querySelector("form");
     form.reset();
     var fileInput = document.querySelector(".file-input");
@@ -49,15 +48,16 @@ function init_form(){
     return [form,fileInput];
 }
 
-// fonction qui va lire et créer 2 arrays qui contiennent les valeurs des abscisses et ordonnées
+
+// function that takes 2 arrays that contain x et y data
 function processData(allRows,func) {
-    const columns = Object.keys(allRows[0]); // on choppe le nom des colonnes 
-    var traces = Array(columns.length); // on crée un array vide avec le bon nombre de colonne
-    // on initialise l'objet traces 
+    const columns = Object.keys(allRows[0]); // get columns name
+    var traces = Array(columns.length); // empty array according to the number of columns
+    // initialisation of the object traces
     for (var i = 0; i < traces.length; i++) {
         traces[i] = { x : [],y : [],type:'scatter'};
     }
-    for (var i=0; i<allRows.length; i++) { // boucle sur les lignes du fichier
+    for (var i=0; i<allRows.length; i++) { // loop over files
         for (var k=0; k<columns.length;k++){
             var row = allRows[i];
             traces[k]["y"].push(row[columns[k]]);
@@ -66,13 +66,12 @@ function processData(allRows,func) {
         }
     }
 
-    // boucle pour déterminer la plus grande et la plus petite valeur du fichier csv 
+    // loop to check the biggest and the lowest value in the csv file (to draw later the labels line)
     var line_top = 0;
     var line_bottom = 0;
     for (var i=0; i<traces.length; i++){
         var temp_top = Math.max.apply(Math,traces[i]['y']);
         var temp_bottom = Math.min.apply(Math, traces[i]['y']) ; 
-        // console.log("temp ",temp_top, temp_bottom); 
         if (temp_top > line_top) {
             line_top = temp_top;
         }
@@ -80,7 +79,7 @@ function processData(allRows,func) {
             line_bottom = temp_bottom;
         }
     }
-    func( traces,line_bottom,line_top ); // appel à la fonction qui prend en paramètre absisse et ordonnées pour créer le graph
+    func( traces,line_bottom,line_top ); // call function that takes the traces object and plot the chart 
 }
 
 export {uploadFile,init_form,processData,display_file};
