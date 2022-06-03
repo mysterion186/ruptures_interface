@@ -190,7 +190,7 @@ def get_algo(model: str = "l2") -> rpt.base.BaseEstimator:
         return rpt.KernelCPD(kernel="cosine")
     else:
         return rpt.Pelt(model=model)
-            )  
+            
 
 # function to handle the file upload process 
 def handle_upload(request,folder_val,sub_folder):
