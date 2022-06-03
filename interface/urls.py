@@ -19,3 +19,6 @@ urlpatterns = [
     path("prediction/coord/<int:folder_val>/<str:folder_name>/<str:filename>",views.coord, name="coord"), # url pour chopper les indices des ruptures 
     path("download",views.download, name="download"), # url pour pouvoir télécharger les dossiers sur lesquels on a travaillé
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT) # url pour accèder aux médias
+
+if settings.DEBUG:
+    urlpatterns.append(path("tests",views.js_test,name="js_test"))

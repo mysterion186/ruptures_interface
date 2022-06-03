@@ -1,0 +1,33 @@
+version: '2'
+
+services:
+  web :
+    build : "."
+    ports : 
+      - "8000:8000"
+    volumes : 
+      - .:/src
+    command: python manage.py runserver 0.0.0.0:8000
+    # command: python manage.py migrate
+  
+  selenium_hub:
+    container_name: selenium_hub
+    image: selenium/hub
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+  chrome:
+
+    image: selenium/node-chrome
+    shm_size: 2gb
+    depends_on:
+      - selenium_hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium_hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    ports:
+      - "5900:5900"
+    volumes:
+      - ./interface/tests/files:/src
