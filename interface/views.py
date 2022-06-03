@@ -19,32 +19,22 @@ from pathlib import Path
 def index(request):
     # folder_val = randint(0, 1000) # dossier pour chaque utilisateur
     # request.session["folder_val"] = str(folder_val)
-    folder_val = request.session.get(
-        "folder_val", str(randint(0, 1000))
-    )  # si la valeur n'est pas dans la session on donne une valeur random
-    request.session["folder_val"] = str(
-        folder_val
-    )  # "sécurité" on sauvegarde la valeur du dossier dans la session
+    folder_val = request.session.get("folder_val",str(randint(0, 1000))) # si la valeur n'est pas dans la session on donne une valeur random
+    request.session["folder_val"] = str(folder_val) # "sécurité" on sauvegarde la valeur du dossier dans la session
     # si méthode == post => on a uploadé un fichier
-    if request.method == "POST" and request.FILES["myfile"]:
-        myfile = request.FILES["myfile"]  # lecture du fichier depuis la requête
-        fs = FileSystemStorage()
-        if (
-            myfile.name.split(".")[-1] == "csv" or myfile.name.split(".")[-1] == "json"
-        ):  # on accepte que les fichiers csv ou json
-            filename = fs.save(
-                str(folder_val) + "/train/" + myfile.name, myfile
-            )  # on enregistre le fichier
-            if (
-                myfile.name.split(".")[-1] == "csv"
-            ):  # on standardise que les fichiers csv
-                tools.standardize_csv(
-                    str(MEDIA_ROOT) + "/" + str(folder_val) + "/train/", myfile.name
-                )  # on le standardise
-            return render(
-                request, "interface/index.html"
-            )  # on retourne la page d'accueil
-    return render(request, "interface/index.html")
+    if request.method == 'POST':
+        # for k in range(len(request.FILES.getlist("myfile"))) : 
+        #     print(request.FILES.getlist("myfile")[k])
+        #     myfile = request.FILES.getlist("myfile")[k]
+        #     fs = FileSystemStorage()
+        #     if myfile.name.split('.')[-1]=='csv' or myfile.name.split('.')[-1]=='json': # on accepte que les fichiers csv ou json     
+        #         filename = fs.save(str(folder_val)+"/train/"+myfile.name, myfile) # on enregistre le fichier
+        #         if myfile.name.split(".")[-1]=="csv": # on standardise que les fichiers csv
+        #             tools.standardize_csv(str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/",myfile.name) # on le standardise 
+        request = tools.handle_upload(request,folder_val,"train")
+        return render(request, 'interface/index.html') # on retourne la page d'accueil
+    return render(request,"interface/index.html")
+
 
 
 # page pour labelisé les signaux non labelisé
@@ -135,6 +125,7 @@ def train(request):
 def get_signals(request):
     # folder_val = request.session.get("folder_val",CURRENT_FOLD)
     folder_val = request.session["folder_val"]
+
     # si méthode == post => on a uploadé un fichier
     if request.method == "POST" and request.FILES["myfile"]:
         myfile = request.FILES["myfile"]  # lecture du fichier depuis la requête
@@ -156,8 +147,14 @@ def get_signals(request):
                 {"status": "success", "filename": myfile.name}
             )  # on retourne la page d'accueil
 
+    # si méthode == post => on a uploadé un fichier 
+    if request.method == 'POST':
+        request = tools.handle_upload(request,folder_val,"test")
+        files = [f for f in request.FILES.getlist("myfile")]
+        return JsonResponse({"status": "success"}) # on retourne la page d'accueil 
 
-# "vue" pour faire appel à alpin_predict
+# "vue" pour faire appel à alpin_predict 
+
 def predict(request):
     # folder_val = request.session.get("folder_val",CURRENT_FOLD)
     folder_val = request.session["folder_val"]
@@ -277,3 +274,21 @@ def download(request):
         response["Content-Disposition"] = "attachment; filename=" + folder_val + ".zip"
     os.remove(output_path + ".zip")
     return response
+def js_test(request):
+    # folder_val = request.session.get("folder_val",CURRENT_FOLD)
+    folder_val = str(976)
+    media_path = str(MEDIA_ROOT)+"/"+str(folder_val)+"/train/"
+    # si le dossier train n'existe pas on redirige vers la page d'accueil pour uploader les fichiers
+    if not os.path.isdir(media_path):
+        return HttpResponseRedirect(reverse("interface:index"))
+    
+    # liste de tous les fichiers se trouvant dans le dossier média
+    files = [f for f in listdir(media_path) if isfile(join(media_path, f)) and f.split(".")[-1]=="csv"]
+    for file_name in files : 
+        json_name = '.'.join(file_name.split(".")[:-1])+".json"
+        if os.path.exists(media_path+json_name):
+            labels = tools.load_json(Path(media_path+json_name))
+            tools.standardize_json(media_path+file_name,labels)
+    # affichage de la page pour mettre les labesl + noms des fichiers pour avoir l'url
+    return render(request,"interface/test.html",{"files":files,"MEDIA_URL":media_path,"folder_val":folder_val})
+

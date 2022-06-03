@@ -160,6 +160,27 @@ plotDiv.on('plotly_selected', (eventData) => {
     })
     Plotly.redraw('myDiv');
 });
+
 };
 
 makeplot("976/train/2.csv");
+
+function triggerClick(gd, elementToClick) {
+    const { x, y, width, height } = elementToClick.getBoundingClientRect();
+    const dragEl = gd.querySelector('.cursor-crosshair');
+    const eventProps = {
+        clientX: x + width/2,
+        clientY: y + height/2
+    };
+    //console.log('sending mousedown to drag element');
+    dragEl.dispatchEvent(new MouseEvent('mousedown', eventProps));
+    //console.log('sending mouseup to document');
+    document.dispatchEvent(new MouseEvent('mouseup', eventProps));        
+}
+
+// Works
+const gd = document.querySelector('.js-plotly-plot');
+const elementWeWantToClick = gd.querySelector('g.plot g.scatterlayer g.trace g.points path.point');
+triggerClick(gd, elementWeWantToClick);
+
+

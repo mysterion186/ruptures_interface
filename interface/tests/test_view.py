@@ -66,6 +66,31 @@ class TestView(TestCase):
         self.assertFalse(os.path.exists(self.file_path+'/train/aide.html'))
 
 
+    def test_upload_multiple_files_home(self):
+        """
+            Test function to check if we can send multiple files at once
+        """
+        # files opening
+        f1 = open(str(BASE_DIR)+"/interface/tests/files/header/csv_no_header_1D.csv",'r')
+        f2 = open(str(BASE_DIR)+"/interface/tests/files/header/csv_header_1D.csv","r")
+        f3 = open(str(BASE_DIR)+"/interface/tests/files/header/csv_header_2D.csv","r")
+        f4 = open(str(BASE_DIR)+"/interface/tests/files/aide.html","r") # this file shouldn"t be in the media folder
+
+        # sending data 
+        self.client.post('',{"myfile":[f1,f2,f3,f4]})
+
+        # checking if files are here + if they have the good format 
+        self.assertTrue(os.path.exists(self.file_path+'/train/csv_no_header_1D.csv'))
+        self.assertTrue(tools.is_header(Path(self.file_path+'/train/csv_no_header_1D.csv')))
+
+        self.assertTrue(os.path.exists(self.file_path+'/train/csv_header_1D.csv'))
+        self.assertTrue(tools.is_header(Path(self.file_path+'/train/csv_header_1D.csv')))
+
+        self.assertTrue(os.path.exists(self.file_path+'/train/csv_header_2D.csv'))
+        self.assertTrue(tools.is_header(Path(self.file_path+'/train/csv_header_2D.csv')))
+        self.assertFalse(os.path.exists(self.file_path+'/train/aide.html')) # this file shouldn't exist
+
+
     # test pour voir si les fichiers json sont bien "standardisé" 
     def test_check_json_standard_train(self):
         """
@@ -241,3 +266,58 @@ class TestView(TestCase):
         self.checklist(test_json_1,label_json_1)
         self.checklist(test_json_2,label_json_2)
         self.checklist(test_json_3,label_json_3)
+
+
+
+    def test_upload_file_prediction(self):
+        """
+            Test to check that file uploaded one by one are in the test folder + are well formated
+            case where we send 1d file without header -> check that the file exists and there is a header
+            case where we send 1d file with header -> check that there is no double header + the file exists
+            case where we send 2d file with header -> check that there is no double header + the file exists
+            case where we send 12 file without header -> check that the file exists and there is a header
+        """
+
+        self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_no_header_1D.csv",'/prediction/signal')
+        self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_header_1D.csv",'/prediction/signal')
+        self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_header_2D.csv",'/prediction/signal')
+        self.send_data(str(BASE_DIR)+"/interface/tests/files/header/csv_no_header_2D.csv",'/prediction/signal')
+        self.send_data(str(BASE_DIR)+"/interface/tests/files/aide.html",'/prediction/signal') # this file shouldn't be found because it is not a csv or json file
+        
+        self.assertTrue(os.path.exists(self.file_path+'/test/csv_no_header_1D.csv'))
+        self.assertTrue(tools.is_header(Path(self.file_path+'/test/csv_no_header_1D.csv')))
+
+        self.assertTrue(os.path.exists(self.file_path+'/test/csv_header_1D.csv'))
+        self.assertTrue(tools.is_header(Path(self.file_path+'/test/csv_header_1D.csv')))
+
+        self.assertTrue(os.path.exists(self.file_path+'/test/csv_header_2D.csv'))
+        self.assertTrue(tools.is_header(Path(self.file_path+'/test/csv_header_2D.csv')))
+
+        self.assertTrue(os.path.exists(self.file_path+'/test/csv_no_header_2D.csv'))
+        self.assertTrue(tools.is_header(Path(self.file_path+'/test/csv_no_header_2D.csv')))
+        self.assertFalse(os.path.exists(self.file_path+'/test/aide.html'))
+
+
+    def test_upload_multiple_files_home(self):
+        """
+            Test function to check if we can send multiple files at once + check format (cf previous test cas)
+        """
+        # files opening
+        f1 = open(str(BASE_DIR)+"/interface/tests/files/header/csv_no_header_1D.csv",'r')
+        f2 = open(str(BASE_DIR)+"/interface/tests/files/header/csv_header_1D.csv","r")
+        f3 = open(str(BASE_DIR)+"/interface/tests/files/header/csv_header_2D.csv","r")
+        f4 = open(str(BASE_DIR)+"/interface/tests/files/aide.html","r") # this file shouldn"t be in the media folder
+
+        # sending data 
+        self.client.post('/prediction/signal',{"myfile":[f1,f2,f3,f4]})
+
+        # checking if files are here + if they have the good format 
+        self.assertTrue(os.path.exists(self.file_path+'/test/csv_no_header_1D.csv'))
+        self.assertTrue(tools.is_header(Path(self.file_path+'/test/csv_no_header_1D.csv')))
+
+        self.assertTrue(os.path.exists(self.file_path+'/test/csv_header_1D.csv'))
+        self.assertTrue(tools.is_header(Path(self.file_path+'/test/csv_header_1D.csv')))
+
+        self.assertTrue(os.path.exists(self.file_path+'/test/csv_header_2D.csv'))
+        self.assertTrue(tools.is_header(Path(self.file_path+'/test/csv_header_2D.csv')))
+        self.assertFalse(os.path.exists(self.file_path+'/test/aide.html')) # this file shouldn't exist

@@ -1,4 +1,4 @@
-import {uploadFile,init_form } from './commun.js'
+import {uploadFile,init_form,display_file} from './commun.js'
 
 var getUrl = window.location;
 var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" ;
@@ -11,20 +11,25 @@ const form = temp[0], fileInput = temp[1];
 // fonction pour réduire la taille des fichiers dans l'espace réservée à l'affichage
 fileInput.onchange = (e)=>{
     document.querySelector(".progress-area").style.display = "block";
-    let file = e.target.files[0];
+    let file_list = e.target.files;
     // on rend le bouton "passer à l'étape suivante clickable" 
     const next_step = document.querySelector(".done");
     if (next_step !== null){
         next_step.classList.remove("done");
     }
-    if (file){
-        let fileName = file.name;
-        if (fileName.length >=12 ){
-            var splitname = fileName.split('.')
-            fileName = splitname[0].substring(0,12)+"... ."+splitname[1];
+    for (var i=0; i<file_list.length; i++){
+        var file = file_list[i];
+        console.log(file);
+        if (file){
+            let fileName = file.name;
+            if (fileName.length >=12 ){
+                var splitname = fileName.split('.')
+                fileName = splitname[0].substring(0,12)+"... ."+splitname[1];
+            }
+            display_file(fileName);
         }
-        uploadFile(fileName,form);
     }
+    uploadFile(form);
 };
 
 
