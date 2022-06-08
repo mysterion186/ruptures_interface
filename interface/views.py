@@ -95,6 +95,12 @@ def prediction(request):
             media_path + clean_name + ".json"
         ):  # case where the json folder doesn't exist => redirect to label page
             return HttpResponseRedirect(reverse("interface:label"))
+    if request.method == "POST":
+        ruptures_type = request.POST["ruptures_type"]
+        rupture_dict = {"model": ruptures_type}
+        tools.write_json(rupture_dict,Path(str(MEDIA_ROOT) + "/" + str(folder_val)+"/pen_opt.json"))
+        return render(request, "interface/prediction.html", {"folder_val": folder_val}) # if all conditions are satisfied we go to the prediction page
+    
     return render(request, "interface/prediction.html", {"folder_val": folder_val}) # if all conditions are satisfied we go to the prediction page
 
 
@@ -104,7 +110,8 @@ def train(request):
     folder_val = request.session["folder_val"]
     json_path = str(MEDIA_ROOT) + "/" + str(folder_val) + "/pen_opt.json"
     train_path = str(MEDIA_ROOT) + "/" + str(folder_val) + "/train/"
-    tools.alpin_learn(Path(train_path), Path(json_path))
+    full_dict = tools.load_json(Path(json_path))
+    tools.alpin_learn(Path(train_path), Path(json_path),model = full_dict["model"])
     with open(json_path, "r") as f:
         data = json.load(f)
 
@@ -137,7 +144,8 @@ def predict(request):
             labels = tools.load_json(Path(media_path + json_name))
             tools.standardize_json(media_path + file_name, labels, predict=".true")
     json_path = str(MEDIA_ROOT) + "/" + str(folder_val) + "/pen_opt.json"
-    tools.alpin_predict(Path(test_path), Path(json_path))
+    full_dict = tools.load_json(Path(json_path))
+    tools.alpin_predict(Path(test_path), Path(json_path),model = full_dict["model"])
     return JsonResponse({"status": "success"})
 
 

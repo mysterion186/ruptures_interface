@@ -107,7 +107,7 @@ function update_coordinate(layout) {
         layout["shapes"][i]["x1"] = Math.round(layout["shapes"][i]["x1"]);
         if (coordinates[i] !== undefined){
             if (coordinates[i].id !== layout["shapes"][i]["x0"] ){
-                coordinates[i].innerHTML = 'Label au point : '+layout["shapes"][i]["x0"];
+                coordinates[i].innerHTML = 'break at : '+layout["shapes"][i]["x0"];
                 coordinates[i].id = layout["shapes"][i]["x0"];
                 crosses[i].id = "cross_"+layout["shapes"][i]["x0"];
             }
@@ -122,7 +122,7 @@ function create_label(layout,id_name,id_name_2){
     var result = "";
     var result_r = "";
     if (layout["shapes"].length >0 ){
-        result += '<div id='+layout["shapes"][layout["shapes"].length -1 ]["x0"]+' class="label_coordinate">Label au point : '+layout["shapes"][layout["shapes"].length -1 ]["x0"] +'</div>';
+        result += '<div id='+layout["shapes"][layout["shapes"].length -1 ]["x0"]+' class="label_coordinate">break at : '+layout["shapes"][layout["shapes"].length -1 ]["x0"] +'</div>';
         result_r = '<div id=cross_'+layout["shapes"][layout["shapes"].length -1 ]["x0"]+' class="cross"></div>';
         display.innerHTML +=result;
         display_r.innerHTML+=result_r;
@@ -195,6 +195,10 @@ function choosed_file(file_id){
     filename.classList.add("choosed");
 }
 
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
 const validation_button = document.getElementById("validation");
 validation_button.addEventListener("click",()=>{
     if (validation_button.innerHTML === "Confirm labels"){
@@ -203,7 +207,8 @@ validation_button.addEventListener("click",()=>{
         filename[filenum].click();
     }
     else {
-        window.location.href=baseUrl+"prediction";
+        // window.location.href=baseUrl+"prediction";
+        btn.click(); // click on modal to chosse the breakpoints type
     }
     })
 function validation(){
@@ -237,11 +242,37 @@ function set_validation_text() {
     const processed = document.querySelectorAll(".done");
     const validation_button = document.getElementById("validation");
     if (processed.length === filename.length){
-        validation_button.innerHTML = "Train";
+        // validation_button.innerHTML = "Train";
+        btn.click(); // click on modal to chosse the breakpoints type
     }
 }
 
 function redirect(){
     var url = baseUrl+"/prediction";
     window.location(url);
+}
+
+// Get the modal
+var modal = document.getElementById("myModal");
+
+
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on the button, open the modal
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
 }
