@@ -24,7 +24,9 @@ function makePlotly( traces,line_bottom,line_top ){
     var layout = { 
         title : selected_file.innerHTML,
         hovermode:'closest',
-        shapes: []};
+        shapes: [], 
+        dragmode:"select",
+    };
     const folder_val = document.getElementById("folder_val"); // get the folder_val that is the current session
     axios.get(`prediction/coord/${folder_val.innerHTML}/train/${selected_file.innerHTML}`).then((response) => {
         if (response["data"]["status"] === "success") {
@@ -72,6 +74,69 @@ function makePlotly( traces,line_bottom,line_top ){
         create_label(layout,"left","right"); // function that add the last value to the dom
         event_listener_label("label_coordinate",layout);
     });
+
+    
+// create box 
+plotDiv.on('plotly_selected', (eventData) => {
+    if (!eventData) return;
+    var xRange = eventData.range.x;
+    var yRange = eventData.range.y;
+    console.log("x0 = ",xRange[0]," x1 = ",xRange[1]," y0 = ",yRange[0]," y1 = ",yRange[1]);
+    // trait vertical en x0
+    layout["shapes"].push({
+        'type': 'line',
+        'x0':xRange[0],
+        'y0':yRange[0],
+        'x1':xRange[0],
+        'y1':yRange[1],
+        'line': {
+            'color': 'red',
+             dash: 'dot',
+            'width':3,
+        }
+    })
+    //vertical at x1
+    layout["shapes"].push({
+        'type': 'line',
+        'x0':xRange[1],
+        'y0':yRange[0],
+        'x1':xRange[1],
+        'y1':yRange[1],
+        'line': {
+            'color': 'red',
+             dash: 'dot',
+            'width':3,
+        }
+    })
+    //horizontal at y1
+    layout["shapes"].push({
+        'type': 'line',
+        'x0':xRange[0],
+        'y0':yRange[1],
+        'x1':xRange[1],
+        'y1':yRange[1],
+        'line': {
+            'color': 'red',
+             dash: 'dot',
+            'width':3,
+        }
+    })
+    // horizontal at y0
+    layout["shapes"].push({
+        'type': 'line',
+        'x0':xRange[0],
+        'y0':yRange[0],
+        'x1':xRange[1],
+        'y1':yRange[0],
+        'line': {
+            'color': 'red',
+             dash: 'dot',
+            'width':3,
+        }
+    })
+    Plotly.redraw('myDiv');
+});
+
     // function that each time the mouse is on the graph will update the labels coordinate on the dom
     plotDiv.addEventListener("mouseover", () =>{
         update_coordinate(layout);
