@@ -132,7 +132,7 @@ def alpin_learn(
     opt = minimize(fun=alpin_loss, x0=np.array([1]), method="BFGS", jac=True)
     pen_opt = float(opt.x)  # the optimal penalty
     # Write result
-    write_json(obj={"pen_opt": pen_opt}, filename=output_filename)
+    write_json(obj={"model":model,"pen_opt": pen_opt}, filename=output_filename)
 
 
 def alpin_predict(

@@ -11,6 +11,33 @@
          <a href="{% url 'interface:aide' %}" target="_blank">Click here to get more informations.</a>
          Once you confirmed all labels, you can find the penalty value.
     </div>
+    <!-- Trigger/Open The Modal -->
+    <button id="myBtn" hidden >Open Modal</button>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div>
+            <form method="post" action="{% url 'interface:prediction' %}">
+                {% csrf_token %}
+                <select name="ruptures_type" id="ruptures_type">
+                    <option value="l2">l2</option>
+                    <option value="l1">l1</option>
+                    <option value="linear">linear</option>
+                    <option value="rbf">rbf</option>
+                    <option value="normal">normal</option>
+                    <option value="mahalanobis">mahalanobis</option>
+                    <option value="rank">rank</option>
+                    <option value="cosine">cosine</option>
+                </select>
+                <input  type = "submit" class="validation" value="Choose this cost function">
+            </form>
+        </div>
+    </div>
+
+</div>
     <section class="label">
         <p hidden id="folder_val">{{ folder_val }}</p>
         <div id="myDiv" style="width: 900px; height: 500px;"><!-- Plotly chart will be drawn inside this DIV --></div> 

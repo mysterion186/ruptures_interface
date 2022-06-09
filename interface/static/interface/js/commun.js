@@ -33,7 +33,9 @@ function display_file(name,home=true){
 // function that is used to send form to the 'post_url' value
 function uploadFile(form,post_url=''){
     var formData = new FormData(form);
-    axios.post(post_url,formData); // envoie du fichier au serveur
+    const csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0];
+    const headers = {"X-CSRFTOKEN": csrf_token.value}
+    axios.post(post_url,formData,{headers:headers}); // envoie du fichier au serveur
 }
 
 
