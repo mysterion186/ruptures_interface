@@ -25,7 +25,7 @@ function makePlotly( traces,line_bottom,line_top ){
         title : selected_file.innerHTML,
         hovermode:'closest',
         shapes: [], 
-        dragmode:"select",
+        // dragmode:"select",
     };
     const folder_val = document.getElementById("folder_val"); // get the folder_val that is the current session
     axios.get(`prediction/coord/${folder_val.innerHTML}/train/${selected_file.innerHTML}`).then((response) => {
