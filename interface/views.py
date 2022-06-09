@@ -16,6 +16,7 @@ from pathlib import Path
 
 
 # home page
+@csrf_exempt
 def index(request):
     folder_val = request.session.get("folder_val",str(randint(0, 1000))) # create a random value for the session if no value is found
     request.session["folder_val"] = str(folder_val) # save the folder value again in the session (just to be sure)
