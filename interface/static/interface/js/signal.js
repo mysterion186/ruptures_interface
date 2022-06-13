@@ -11,6 +11,11 @@ filename.forEach(elt => elt.addEventListener('click', ()=>{reset_page();choosed_
 var filenum = 0;
 // plot the first the graphe
 filename[filenum].click()
+
+
+var labels_coordinate = []; // array that will contains either an integer (x position for vertical line) or an array of integer (x position for a zone)
+
+
 // function to init the plotting part (download data, process it and plot it)
 function makeplot(filename) {
     d3.dsv(' ')(filename, function(data){ processData(data,makePlotly) } );
@@ -25,7 +30,7 @@ function makePlotly( traces,line_bottom,line_top ){
         title : selected_file.innerHTML,
         hovermode:'closest',
         shapes: [], 
-        // dragmode:"select",
+        dragmode:"select", // line to allow zone selection 
     };
     const folder_val = document.getElementById("folder_val"); // get the folder_val that is the current session
     axios.get(`prediction/coord/${folder_val.innerHTML}/train/${selected_file.innerHTML}`).then((response) => {
@@ -69,9 +74,12 @@ function makePlotly( traces,line_bottom,line_top ){
                     'width':3,
                 }
             })
+            labels_coordinate.push(data.points[i].x); // on ajoute le points dans notre label, théoriquement il devrait y avoir que 1 point dans un click
+            console.log(labels_coordinate);
             Plotly.redraw('myDiv'); // graph update
         }
-        create_label(layout,"left","right"); // function that add the last value to the dom
+        // create_label(layout,"left","right"); // function that add the last value to the dom
+        create_label(labels_coordinate,"left","right"); // function that add the last value to the dom
         event_listener_label("label_coordinate",layout);
     });
 
@@ -81,27 +89,31 @@ plotDiv.on('plotly_selected', (eventData) => {
     if (!eventData) return;
     var xRange = eventData.range.x;
     var yRange = eventData.range.y;
-    console.log("x0 = ",xRange[0]," x1 = ",xRange[1]," y0 = ",yRange[0]," y1 = ",yRange[1]);
+    var x0 = Math.round(xRange[0]);
+    var x1 = Math.round(xRange[1]);
+    var y0 = Math.round(yRange[0]);
+    var y1 = Math.round(yRange[1]);
+    console.log("x0 = ",x0," x1 = ",x1," y0 = ",typeof y0," y1 = ",y1);
     // trait vertical en x0
     layout["shapes"].push({
         'type': 'line',
-        'x0':xRange[0],
-        'y0':yRange[0],
-        'x1':xRange[0],
-        'y1':yRange[1],
+        'x0':x0,
+        'y0':line_bottom,
+        'x1':x0,
+        'y1':line_top,
         'line': {
             'color': 'red',
              dash: 'dot',
             'width':3,
         }
     })
-    //vertical at x1
+    // vertical at x1
     layout["shapes"].push({
         'type': 'line',
-        'x0':xRange[1],
-        'y0':yRange[0],
-        'x1':xRange[1],
-        'y1':yRange[1],
+        'x0':x1,
+        'y0':line_bottom,
+        'x1':x1,
+        'y1':line_top,
         'line': {
             'color': 'red',
              dash: 'dot',
@@ -111,10 +123,10 @@ plotDiv.on('plotly_selected', (eventData) => {
     //horizontal at y1
     layout["shapes"].push({
         'type': 'line',
-        'x0':xRange[0],
-        'y0':yRange[1],
-        'x1':xRange[1],
-        'y1':yRange[1],
+        'x0':x0,
+        'y0':line_top,
+        'x1':x1,
+        'y1':line_top ,
         'line': {
             'color': 'red',
              dash: 'dot',
@@ -124,22 +136,26 @@ plotDiv.on('plotly_selected', (eventData) => {
     // horizontal at y0
     layout["shapes"].push({
         'type': 'line',
-        'x0':xRange[0],
-        'y0':yRange[0],
-        'x1':xRange[1],
-        'y1':yRange[0],
+        'x0':x0,
+        'y0':line_bottom,
+        'x1':x1,
+        'y1':line_bottom,
         'line': {
             'color': 'red',
              dash: 'dot',
             'width':3,
         }
     })
+    labels_coordinate.push([x0,x1] );
+    create_label(labels_coordinate,"left","right"); // function that add the last value to the dom
+    // console.log("liste ",[xRange[0],xRange[1]]);
+    // console.log("full ",labels_coordinate);
     Plotly.redraw('myDiv');
 });
 
     // function that each time the mouse is on the graph will update the labels coordinate on the dom
     plotDiv.addEventListener("mouseover", () =>{
-        update_coordinate(layout);
+        update_coordinate(labels_coordinate,layout);
     })
 };
 
@@ -156,34 +172,96 @@ function event_listener_label(class_name,layout){
     label_x.forEach(elt => elt.addEventListener("mouseleave",()=>{change_color(elt.id,"black",layout);}))
 }
 
+// // function to update the coordinate value on the dom
+// function update_coordinate(layout) {
+//     var coordinates = document.querySelectorAll(".label_coordinate");
+//     var crosses = document.querySelectorAll(".cross");
+//     // should be as much cross as coordinate value
+//     for (var i = 0; i<layout["shapes"].length; i++){
+//         var coordinates = document.querySelectorAll(".label_coordinate");
+//         layout["shapes"][i]["x0"] = Math.round(layout["shapes"][i]["x0"]);
+//         layout["shapes"][i]["x1"] = Math.round(layout["shapes"][i]["x1"]);
+//         if (coordinates[i] !== undefined){
+//             if (coordinates[i].id !== layout["shapes"][i]["x0"] ){
+//                 coordinates[i].innerHTML = 'break at : '+layout["shapes"][i]["x0"];
+//                 coordinates[i].id = layout["shapes"][i]["x0"];
+//                 crosses[i].id = "cross_"+layout["shapes"][i]["x0"]; // update the cross id to delete the proper label
+//             }
+//         }
+//     }
+// }
+
 // function to update the coordinate value on the dom
-function update_coordinate(layout) {
+function update_coordinate(label_coord,layout) {
     var coordinates = document.querySelectorAll(".label_coordinate");
     var crosses = document.querySelectorAll(".cross");
+    var label_index = 0; // index to apply on the label_coordinate to check if this is a vertical line (point) or a box (2 vertical lines)
     // should be as much cross as coordinate value
     for (var i = 0; i<layout["shapes"].length; i++){
         var coordinates = document.querySelectorAll(".label_coordinate");
-        layout["shapes"][i]["x0"] = Math.round(layout["shapes"][i]["x0"]);
-        layout["shapes"][i]["x1"] = Math.round(layout["shapes"][i]["x1"]);
         if (coordinates[i] !== undefined){
-            if (coordinates[i].id !== layout["shapes"][i]["x0"] ){
-                coordinates[i].innerHTML = 'break at : '+layout["shapes"][i]["x0"];
-                coordinates[i].id = layout["shapes"][i]["x0"];
-                crosses[i].id = "cross_"+layout["shapes"][i]["x0"];
+            if (typeof labels_coordinate[label_index]==="number"){ // case this is a vertical line
+                layout["shapes"][i]["x0"] = Math.round(layout["shapes"][i]["x0"]);
+                layout["shapes"][i]["x1"] = Math.round(layout["shapes"][i]["x1"]);
+
+                if (coordinates[label_index].id !== layout["shapes"][i]["x0"] ){
+                    coordinates[label_index].innerHTML = 'break at : '+layout["shapes"][i]["x0"];
+                    coordinates[label_index].id = layout["shapes"][i]["x0"];
+                    crosses[label_index].id = "cross_"+layout["shapes"][i]["x0"]; // update the cross id to delete the proper label
+                }
             }
+            else{ // case this is a break zone  
+                
+                console.log(coordinates[label_index].getAttribute("x0"));
+                if (coordinates[label_index].getAttribute("x0") !== layout["shapes"][i]["x0"] || coordinates[label_index].getAttribute("x1") !== layout["shapes"][i]["x1"] ){
+                    label_coord[label_index][0] = Math.round(layout["shapes"][i]["x0"]);
+                    layout["shapes"][i]["x0"] = Math.round(layout["shapes"][i]["x0"]);
+                    label_coord[label_index][1] = Math.round(layout["shapes"][i+1]["x1"]);
+                    layout["shapes"][i+1]["x1"] = Math.round(layout["shapes"][i+1]["x1"]);
+                    coordinates[label_index].innerHTML = 'break zone : '+layout["shapes"][i]["x0"]+"-"+layout["shapes"][i+1]["x1"];
+                    coordinates[label_index].id = layout["shapes"][i]["x0"];
+                    crosses[label_index].id = "cross_"+layout["shapes"][i]["x0"]; // update the cross id to delete the proper label
+                    console.log("chgmt ",labels_coordinate);
+                }
+                i = i+3; // skip the 3 next layout values because they correspond to the other vertical line and the both horizontal lines
+                label_index++;
+            }
+            label_index++ ;
         }
     }
 }
 
+// // function to add coordinate on the dom
+// function create_label(layout,id_name,id_name_2){
+//     var display = document.getElementById(id_name);
+//     var display_r = document.getElementById(id_name_2);
+//     var result = "";
+//     var result_r = "";
+//     if (layout["shapes"].length >0 ){
+//         result += '<div id='+layout["shapes"][layout["shapes"].length -1 ]["x0"]+' class="label_coordinate">break at : '+layout["shapes"][layout["shapes"].length -1 ]["x0"] +'</div>';
+//         result_r = '<div id=cross_'+layout["shapes"][layout["shapes"].length -1 ]["x0"]+' class="cross"></div>';
+//         display.innerHTML +=result;
+//         display_r.innerHTML+=result_r;
+//     }
+    
+// }
 // function to add coordinate on the dom
-function create_label(layout,id_name,id_name_2){
+function create_label(labels_coord,id_name,id_name_2){
     var display = document.getElementById(id_name);
     var display_r = document.getElementById(id_name_2);
     var result = "";
     var result_r = "";
-    if (layout["shapes"].length >0 ){
-        result += '<div id='+layout["shapes"][layout["shapes"].length -1 ]["x0"]+' class="label_coordinate">break at : '+layout["shapes"][layout["shapes"].length -1 ]["x0"] +'</div>';
-        result_r = '<div id=cross_'+layout["shapes"][layout["shapes"].length -1 ]["x0"]+' class="cross"></div>';
+    if (labels_coord.length >0 ){
+        if (typeof labels_coord[labels_coord.length -1 ]==='number'){
+            console.log("dans le if ",labels_coord[labels_coord.length -1 ])
+            result += '<div id='+labels_coord[labels_coord.length -1 ]+' class="label_coordinate">break at : '+labels_coord[labels_coord.length -1 ] +'</div>';
+            result_r = '<div id=cross_'+labels_coord[labels_coord.length -1 ]+' class="cross"></div>';
+        }
+        else {
+            console.log("Dans le else ",labels_coord[labels_coord.length -1 ][0]);
+            result += '<div id='+labels_coord[labels_coord.length -1 ][0]+' x0='+labels_coord[labels_coord.length -1][0 ]+' x1='+labels_coord[labels_coord.length -1][1]+' class="label_coordinate">break zone : '+ labels_coord[labels_coord.length -1 ][0]+"-" +labels_coord[labels_coord.length -1 ][1]+'</div>';
+            result_r = '<div id=cross_'+labels_coord[labels_coord.length -1 ][0]+' class="cross"></div>';
+        }
         display.innerHTML +=result;
         display_r.innerHTML+=result_r;
     }
@@ -193,8 +271,8 @@ function create_label(layout,id_name,id_name_2){
 
 // functin to delete a label from the graph and the dom
 function delete_label(layout,elt_id){
+    var id_value = parseInt(elt_id);
     for (var i=0; i < layout["shapes"].length; i++){
-        var id_value = parseInt(elt_id);
         if (layout["shapes"][i]["x0"] === id_value){
             layout["shapes"].splice(i, 1);
         }
