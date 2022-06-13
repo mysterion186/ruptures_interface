@@ -148,6 +148,7 @@ plotDiv.on('plotly_selected', (eventData) => {
     })
     labels_coordinate.push([x0,x1] );
     create_label(labels_coordinate,"left","right"); // function that add the last value to the dom
+    event_listener_label("label_coordinate",layout);
     // console.log("liste ",[xRange[0],xRange[1]]);
     // console.log("full ",labels_coordinate);
     Plotly.redraw('myDiv');
@@ -172,24 +173,6 @@ function event_listener_label(class_name,layout){
     label_x.forEach(elt => elt.addEventListener("mouseleave",()=>{change_color(elt.id,"black",layout);}))
 }
 
-// // function to update the coordinate value on the dom
-// function update_coordinate(layout) {
-//     var coordinates = document.querySelectorAll(".label_coordinate");
-//     var crosses = document.querySelectorAll(".cross");
-//     // should be as much cross as coordinate value
-//     for (var i = 0; i<layout["shapes"].length; i++){
-//         var coordinates = document.querySelectorAll(".label_coordinate");
-//         layout["shapes"][i]["x0"] = Math.round(layout["shapes"][i]["x0"]);
-//         layout["shapes"][i]["x1"] = Math.round(layout["shapes"][i]["x1"]);
-//         if (coordinates[i] !== undefined){
-//             if (coordinates[i].id !== layout["shapes"][i]["x0"] ){
-//                 coordinates[i].innerHTML = 'break at : '+layout["shapes"][i]["x0"];
-//                 coordinates[i].id = layout["shapes"][i]["x0"];
-//                 crosses[i].id = "cross_"+layout["shapes"][i]["x0"]; // update the cross id to delete the proper label
-//             }
-//         }
-//     }
-// }
 
 // function to update the coordinate value on the dom
 function update_coordinate(label_coord,layout) {
@@ -198,22 +181,27 @@ function update_coordinate(label_coord,layout) {
     var label_index = 0; // index to apply on the label_coordinate to check if this is a vertical line (point) or a box (2 vertical lines)
     // should be as much cross as coordinate value
     for (var i = 0; i<layout["shapes"].length; i++){
+        // console.log("i = ",i," value = ",labels_coordinate[label_index]," layout = ", layout["shapes"][i]);
         var coordinates = document.querySelectorAll(".label_coordinate");
         if (coordinates[i] !== undefined){
             if (typeof labels_coordinate[label_index]==="number"){ // case this is a vertical line
+                console.log("Cas ligne verticale");
                 layout["shapes"][i]["x0"] = Math.round(layout["shapes"][i]["x0"]);
                 layout["shapes"][i]["x1"] = Math.round(layout["shapes"][i]["x1"]);
-
+                label_coord[label_index] = Math.round(layout["shapes"][i]["x0"]);
+                
                 if (coordinates[label_index].id !== layout["shapes"][i]["x0"] ){
                     coordinates[label_index].innerHTML = 'break at : '+layout["shapes"][i]["x0"];
                     coordinates[label_index].id = layout["shapes"][i]["x0"];
+                    console.log(layout["shapes"][i]["x0"]);
                     crosses[label_index].id = "cross_"+layout["shapes"][i]["x0"]; // update the cross id to delete the proper label
                 }
             }
             else{ // case this is a break zone  
                 
-                console.log(coordinates[label_index].getAttribute("x0"));
+                // console.log(coordinates[label_index].getAttribute("x0"));
                 if (coordinates[label_index].getAttribute("x0") !== layout["shapes"][i]["x0"] || coordinates[label_index].getAttribute("x1") !== layout["shapes"][i]["x1"] ){
+                    console.log("Cas zone");
                     label_coord[label_index][0] = Math.round(layout["shapes"][i]["x0"]);
                     layout["shapes"][i]["x0"] = Math.round(layout["shapes"][i]["x0"]);
                     label_coord[label_index][1] = Math.round(layout["shapes"][i+1]["x1"]);
@@ -221,30 +209,24 @@ function update_coordinate(label_coord,layout) {
                     coordinates[label_index].innerHTML = 'break zone : '+layout["shapes"][i]["x0"]+"-"+layout["shapes"][i+1]["x1"];
                     coordinates[label_index].id = layout["shapes"][i]["x0"];
                     crosses[label_index].id = "cross_"+layout["shapes"][i]["x0"]; // update the cross id to delete the proper label
-                    console.log("chgmt ",labels_coordinate);
+                    coordinates[label_index].setAttribute("x0",layout["shapes"][i]["x0"])
+                    coordinates[label_index].setAttribute("x1",layout["shapes"][i+1]["x1"])
+                //     console.log("chgmt ",labels_coordinate);
+                //     console.log("i ",layout["shapes"][i],"i+1 ",layout["shapes"][i+1],"i+2 ",layout["shapes"][i+2])
                 }
-                i = i+3; // skip the 3 next layout values because they correspond to the other vertical line and the both horizontal lines
-                label_index++;
+                else{
+                    console.log("Dans le else du if");
+                }
+                i = i+3; // skip the 3 next layout values because they correspond to the other vertical line and the horizontal lines
+                // label_index++;
             }
             label_index++ ;
         }
+        console.log(labels_coordinate);
     }
 }
 
-// // function to add coordinate on the dom
-// function create_label(layout,id_name,id_name_2){
-//     var display = document.getElementById(id_name);
-//     var display_r = document.getElementById(id_name_2);
-//     var result = "";
-//     var result_r = "";
-//     if (layout["shapes"].length >0 ){
-//         result += '<div id='+layout["shapes"][layout["shapes"].length -1 ]["x0"]+' class="label_coordinate">break at : '+layout["shapes"][layout["shapes"].length -1 ]["x0"] +'</div>';
-//         result_r = '<div id=cross_'+layout["shapes"][layout["shapes"].length -1 ]["x0"]+' class="cross"></div>';
-//         display.innerHTML +=result;
-//         display_r.innerHTML+=result_r;
-//     }
-    
-// }
+
 // function to add coordinate on the dom
 function create_label(labels_coord,id_name,id_name_2){
     var display = document.getElementById(id_name);
