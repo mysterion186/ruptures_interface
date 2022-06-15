@@ -48,7 +48,13 @@ def label(request):
     for file_name in files:
         json_name = ".".join(file_name.split(".")[:-1]) + ".json"
         if os.path.exists(media_path + json_name):
-            labels = tools.load_json(Path(media_path + json_name))
+            temp_labels = tools.load_json(Path(media_path + json_name))
+            labels = []
+            for elt in temp_labels:
+                if isinstance(elt,int): 
+                    labels.append([elt])
+                else : 
+                    labels.append(elt)
             tools.standardize_json(media_path + file_name, labels)
     # display label page + folder name so the js can make a get request and plot them
     return render(
@@ -64,8 +70,13 @@ def get_label(request):
     if request.method == "POST":
         data = json.loads(request.body)
         filename = data["filename"]
-        labels = data["labels"]
-        labels = [int(x) for x in labels]  # convert str to int
+        temp_labels = data["labels"]
+        labels = []
+        for elt in temp_labels:
+            if isinstance(elt,int): 
+                labels.append([elt])
+            else : 
+                labels.append(elt)
         tools.standardize_json(filename, labels)
         return JsonResponse({"status": "Success"})
 
@@ -142,7 +153,13 @@ def predict(request):
     for file_name in files:
         json_name = ".".join(file_name.split(".")[:-1]) + ".true.json"
         if os.path.exists(media_path + json_name):
-            labels = tools.load_json(Path(media_path + json_name))
+            temp_labels = tools.load_json(Path(media_path + json_name))
+            labels = []
+            for elt in temp_labels:
+                if isinstance(elt,int): 
+                    labels.append([elt])
+                else : 
+                    labels.append(elt)
             tools.standardize_json(media_path + file_name, labels, predict=".true")
     json_path = str(MEDIA_ROOT) + "/" + str(folder_val) + "/pen_opt.json"
     full_dict = tools.load_json(Path(json_path))
