@@ -47,19 +47,28 @@ def standardize_json(filename_csv, labels, predict=""):
         a = f.readlines()
     labels.sort()  # sort labels
     clean_label = [
-        elt for elt in labels if elt <= len(a[1:])
+        elt for elt in labels if elt[-1] <= len(a[1:]) # check that the last element ot the list in inferior to the signal length
     ]  # keep only element that are inferior to the signals length
     # case where the last value of the labes are neither signal length-1 or signal length
-    if clean_label[-1] != len(a[1:]) and clean_label[-1] != len(a[1:]) - 1:
-        clean_label.append(len(a[1:]))
-    elif clean_label[-1] == len(a[1:]) - 1:
-        clean_label[-1] = len(a[1:])
+    if clean_label[-1][-1] != len(a[1:]) and clean_label[-1][-1] != len(a[1:]) - 1:
+        print("dans le if ",[len(a[1:])])
+        clean_label.append([len(a[1:])])
+    elif clean_label[-1][-1] == len(a[1:]) - 1:
+        print("dans le elif")
+        clean_label[-1] = [len(a[1:])]
     # create json file that will store the labels, with the same name that the csv file
     clean_label.sort()  # sort the list
+    # convert one item list to intger
+    final_label = []
+    for elt in clean_label:
+        if len(elt) == 1:
+            final_label.append(elt[0])
+        else : 
+            final_label.append(elt)
     raw_name = filename_csv.split(".")[:-1]
     clean_name = ".".join(raw_name)
     with open(clean_name + predict + ".json", "w") as f:
-        f.write(json.dumps(clean_label))
+        f.write(json.dumps(final_label))
 
 
 def load_json(filename: Path):
@@ -111,7 +120,25 @@ def alpin_learn(
     """Learn optimal penalty and write the result on disk."""
 
     # Load data
-    X_train, y_train = load_train_data(folder_train=folder_train)
+    X_train, temp = load_train_data(folder_train=folder_train)
+
+    ################################################ Mean where there a zones in the x_train ################################################
+
+    # labels are in y_train
+    y_train = []
+    # labels are in temp
+    for label in temp :
+        sub_temp = []
+        for elt in label :
+            if isinstance(elt,list): 
+                mean = int((elt[0]+elt[1])/2)
+                sub_temp.append(mean)
+            else : 
+                sub_temp.append(elt)
+        y_train.append(sub_temp)
+    #########################################################################################################################################
+
+
     # The loss to minimize
     def alpin_loss(pen):
         n_train = len(X_train)

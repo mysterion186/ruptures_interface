@@ -5,4 +5,4 @@ migrations
 media
 temp.py
 pen_opt.json
-.env.*
+.env*
