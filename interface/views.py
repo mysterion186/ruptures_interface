@@ -21,8 +21,13 @@ def index(request):
     folder_val = request.session.get("folder_val",str(randint(0, 1000))) # create a random value for the session if no value is found
     request.session["folder_val"] = str(folder_val) # save the folder value again in the session (just to be sure)
     # only for post request (because it's file upload)
-    if request.method == 'POST':
-        request = tools.handle_upload(request,folder_val,"train")
+    if request.method == 'POST': # change folder name according to the fact that the user is logged or not 
+        if request.user.is_authenticated:
+            folder_name = folder_val +"_"+ request.user.username
+        else : 
+            folder_name = folder_val 
+        print(folder_name)
+        request = tools.handle_upload(request,folder_name,"train")
         return render(request, 'interface/index.html') # go back to the index page
     return render(request,"interface/index.html")
 
@@ -33,7 +38,11 @@ def label(request):
     if "folder_val" not in request.session:
         return HttpResponseRedirect(reverse("interface:index"))
     folder_val = request.session["folder_val"]
-    media_path = str(MEDIA_ROOT) + "/" + str(folder_val) + "/train/"
+    if request.user.is_authenticated:
+        folder_name = folder_val +"_"+ request.user.username
+    else : 
+        folder_name = folder_val 
+    media_path = str(MEDIA_ROOT) + "/" + str(folder_name) + "/train/"
     # if the train folder doesn't exist we redirect the user to the home page to upload his signals 
     if not os.path.isdir(media_path):
         return HttpResponseRedirect(reverse("interface:index"))
@@ -60,7 +69,7 @@ def label(request):
     return render(
         request,
         "interface/label.html",
-        {"files": files, "MEDIA_URL": media_path, "folder_val": folder_val},
+        {"files": files, "MEDIA_URL": media_path, "folder_val": folder_name},
     )
 
 
@@ -87,9 +96,13 @@ def prediction(request):
         return HttpResponseRedirect(reverse("interface:index"))
 
     folder_val = request.session["folder_val"]
+    if request.user.is_authenticated:
+        folder_name = folder_val +"_"+ request.user.username
+    else : 
+        folder_name = folder_val 
     # on s'assure que tous les fichiers csv ont un fichier json qui contient les labels , si oui on va vers la page prédiction si non on retourne vers la page label
     # make sure that all csv files have a json files
-    media_path = str(MEDIA_ROOT) + "/" + str(folder_val) + "/train/"
+    media_path = str(MEDIA_ROOT) + "/" + str(folder_name) + "/train/"
     # if the train folder doesn't exist we redirect the user to the home page
     if not os.path.isdir(media_path):
         return HttpResponseRedirect(reverse("interface:index"))
@@ -110,18 +123,22 @@ def prediction(request):
     if request.method == "POST":
         ruptures_type = request.POST["ruptures_type"]
         rupture_dict = {"model": ruptures_type}
-        tools.write_json(rupture_dict,Path(str(MEDIA_ROOT) + "/" + str(folder_val)+"/pen_opt.json"))
-        return render(request, "interface/prediction.html", {"folder_val": folder_val}) # if all conditions are satisfied we go to the prediction page
+        tools.write_json(rupture_dict,Path(str(MEDIA_ROOT) + "/" + str(folder_name)+"/pen_opt.json"))
+        return render(request, "interface/prediction.html", {"folder_val": folder_name}) # if all conditions are satisfied we go to the prediction page
     
-    return render(request, "interface/prediction.html", {"folder_val": folder_val}) # if all conditions are satisfied we go to the prediction page
+    return render(request, "interface/prediction.html", {"folder_val": folder_name}) # if all conditions are satisfied we go to the prediction page
 
 
 
 # function that calls alpin_learn to get pen values
 def train(request):
     folder_val = request.session["folder_val"]
-    json_path = str(MEDIA_ROOT) + "/" + str(folder_val) + "/pen_opt.json"
-    train_path = str(MEDIA_ROOT) + "/" + str(folder_val) + "/train/"
+    if request.user.is_authenticated:
+        folder_name = folder_val +"_"+ request.user.username
+    else : 
+        folder_name = folder_val 
+    json_path = str(MEDIA_ROOT) + "/" + str(folder_name) + "/pen_opt.json"
+    train_path = str(MEDIA_ROOT) + "/" + str(folder_name) + "/train/"
     full_dict = tools.load_json(Path(json_path))
     tools.alpin_learn(Path(train_path), Path(json_path),model = full_dict["model"])
     with open(json_path, "r") as f:
@@ -136,14 +153,22 @@ def get_signals(request):
     folder_val = request.session["folder_val"]
     # only for post request (because it's file upload)
     if request.method == 'POST':
-        request = tools.handle_upload(request,folder_val,"test")
+        if request.user.is_authenticated:
+            folder_name = folder_val +"_"+ request.user.username
+        else : 
+            folder_name = folder_val 
+        request = tools.handle_upload(request,folder_name,"test")
         return JsonResponse({"status": "success"}) # on retourne la page d'accueil 
 
 # url to call alpin predict
 def predict(request):
     folder_val = request.session["folder_val"]
-    test_path = str(MEDIA_ROOT) + "/" + str(folder_val) + "/test/"
-    media_path = str(MEDIA_ROOT) + "/" + str(folder_val) + "/test/"
+    if request.user.is_authenticated:
+        folder_name = folder_val +"_"+ request.user.username
+    else : 
+        folder_name = folder_val 
+    test_path = str(MEDIA_ROOT) + "/" + str(folder_name) + "/test/"
+    media_path = str(MEDIA_ROOT) + "/" + str(folder_name) + "/test/"
     # list all files that are in test folder
     files = [
         f
@@ -161,7 +186,7 @@ def predict(request):
                 else : 
                     labels.append(elt)
             tools.standardize_json(media_path + file_name, labels, predict=".true")
-    json_path = str(MEDIA_ROOT) + "/" + str(folder_val) + "/pen_opt.json"
+    json_path = str(MEDIA_ROOT) + "/" + str(folder_name) + "/pen_opt.json"
     full_dict = tools.load_json(Path(json_path))
     tools.alpin_predict(Path(test_path), Path(json_path),model = full_dict["model"])
     return JsonResponse({"status": "success"})

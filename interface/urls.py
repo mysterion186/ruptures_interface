@@ -29,7 +29,7 @@ urlpatterns = [
         "prediction/predict", views.predict, name="predict"
     ),  # url pour faire appel à alpin_predict
     path(
-        "prediction/coord/<int:folder_val>/<str:folder_name>/<str:filename>",
+        "prediction/coord/<str:folder_val>/<str:folder_name>/<str:filename>",
         views.coord,
         name="coord",
     ),  # url to get the labels that user uploaded to compare with the breaks detected by ruptures 

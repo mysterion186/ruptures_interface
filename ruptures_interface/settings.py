@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import mongoengine
+
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -80,13 +82,24 @@ WSGI_APPLICATION = "ruptures_interface.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+db_name ="db"
+hostname = ""
+username = ""
+pwd = ""
+mongoengine.connect(db=db_name, host=hostname)
 
+DATABASES = {
+       'default': {
+           "ENGINE": "djongo",
+            "NAME": os.environ.get('MONGO_DB_NAME'),
+            "CLIENT": {
+                "host": os.environ.get('MONGO_DB_HOST'),
+                "port": int(os.environ.get('MONGO_DB_PORT')),
+                "username": os.environ.get('MONGO_DB_USERNAME'),
+                "password": os.environ.get('MONGO_DB_PASSWORD'),
+            },
+       }
+   }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -137,4 +150,4 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = 'users.CustomUser' # choose  the custom user model that we created
+# AUTH_USER_MODEL = 'users.CustomUser' # choose  the custom user model that we created
